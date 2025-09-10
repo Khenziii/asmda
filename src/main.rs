@@ -1,3 +1,10 @@
+mod archivers;
+
+use archivers::*;
+
 fn main() {
-    println!("Hello, world!");
+    let letterboxd_archiver = archivers::letterboxd::LetterboxdArchiver {};
+    println!("{}", letterboxd_archiver.get_name());
+
+    letterboxd_archiver.get_data();
 }
