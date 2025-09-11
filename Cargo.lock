@@ -23,6 +23,7 @@ version = "0.1.0"
 dependencies = [
  "fantoccini",
  "reqwest",
+ "tokio 1.47.1",
 ]
 
 [[package]]
