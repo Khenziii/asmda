@@ -1,0 +1,6 @@
+pub mod browser;
+pub mod letterboxd;
+
+pub trait APIWrapper {
+    fn get_name(&self) -> &str;
+}
