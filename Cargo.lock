@@ -23,6 +23,7 @@ version = "0.1.0"
 dependencies = [
  "fantoccini",
  "reqwest",
+ "serde_json",
  "tokio 1.47.1",
 ]
 
