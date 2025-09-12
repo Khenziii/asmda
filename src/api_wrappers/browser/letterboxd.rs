@@ -1,5 +1,6 @@
 use fantoccini::{ClientBuilder, Locator};
 use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper};
+use crate::environment::{environment};
 
 pub struct LetterboxdBrowserAPIWrapper;
 
@@ -22,18 +23,23 @@ impl LetterboxdBrowserAPIWrapper {
             .await
             .expect("Navigation to `letterboxd.com/sign-in` failed!");
 
+        // TODO: check if we've been redirected to `letterboxd.com` and abort if so (this means
+        // we're logged in).
+
+        let environment = environment();
+
         client
             .find(Locator::Id("field-username"))
             .await
             .expect("Failed to get `field-username` input!")
-            .send_keys("username")
+            .send_keys(&environment.letterboxd.username)
             .await
             .expect("Failed to insert keys into `field-username` input!");
         client
             .find(Locator::Id("field-password"))
             .await
             .expect("Failed to get `field-password` input!")
-            .send_keys("password")
+            .send_keys(&environment.letterboxd.password)
             .await
             .expect("Failed to insert keys into `field-password` input!");
         client

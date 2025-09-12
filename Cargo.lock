@@ -21,7 +21,9 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 name = "asmda"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "fantoccini",
+ "once_cell",
  "reqwest",
  "serde_json",
  "tokio 1.47.1",
@@ -183,6 +185,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "encoding_rs"
