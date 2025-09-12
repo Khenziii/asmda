@@ -1,4 +1,5 @@
 use crate::archivers::{Archiver, InstantArchiver};
+use crate::api_wrappers::browser::letterboxd::LetterboxdBrowserAPIWrapper;
 
 pub struct LetterboxdArchiver;
 
@@ -9,8 +10,12 @@ impl Archiver for LetterboxdArchiver {
 }
 
 impl InstantArchiver for LetterboxdArchiver {
-    fn get_data(&self) -> Vec<u8> {
+    async fn get_data(&self) -> Vec<u8> {
+        let lettterboxd_wrapper = LetterboxdBrowserAPIWrapper::new().await;
+        lettterboxd_wrapper.launch().await;
+        lettterboxd_wrapper.export_data().await;
+        lettterboxd_wrapper.close().await;
 
-        todo!("download letterboxd data from https://letterboxd.com/data/export");
+        todo!("Return the file here.");
     }
 }
