@@ -6,7 +6,10 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
-    geckodriver --port 4444 &
+    if ! lsof -i :4444 | read; then
+        echo "geckodriver not yet running on port 4444, executing \`geckodriver &\`.."
+        geckodriver &
+    fi
   '';
 }
 
