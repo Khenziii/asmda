@@ -1,0 +1,23 @@
+services:
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: developmentuser
+      MINIO_ROOT_PASSWORD: developmentpassword
+      MINIO_ADDRESS: ":9000"
+      MINIO_CONSOLE_ADDRESS: ":9001"
+    ports:
+      - "9000:9000"
+      - "3000:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data
+  selenium:
+    image: selenium/standalone-firefox
+    ports:
+      - "4444:4444"
+      - "3001:7900"
+
+volumes:
+  minio_data: ~
+

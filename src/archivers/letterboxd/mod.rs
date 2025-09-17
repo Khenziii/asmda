@@ -13,9 +13,11 @@ impl InstantArchiver for LetterboxdArchiver {
     async fn get_data(&self) -> Vec<u8> {
         let lettterboxd_wrapper = LetterboxdBrowserAPIWrapper::new().await;
         lettterboxd_wrapper.launch().await;
-        lettterboxd_wrapper.export_data().await;
+        let data = lettterboxd_wrapper.export_data().await;
         lettterboxd_wrapper.close().await;
 
-        todo!("Return the file here.");
+        println!("Received data: {:?}", data);
+
+        data
     }
 }
