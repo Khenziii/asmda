@@ -6,7 +6,7 @@ ASMDA (automatic social media data archiver) is a [Rust](https://www.rust-lang.o
 
 ## Development Environment
 
-First you'll need to fill in your environment variables. Do so by copying `.env.example`, renaming it as `.env` and filling out the fields.
+First you'll need to define your environment variables. Do so by copying `.env.example`, renaming it as `.env` and filling out the fields.
 
 ```shell
 $ cp .env.example .env

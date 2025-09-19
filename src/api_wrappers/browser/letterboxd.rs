@@ -1,11 +1,11 @@
-use fantoccini::{Client, ClientBuilder, Locator};
+use async_trait::async_trait;
+use fantoccini::{Client, Locator};
 use reqwest::header::{HeaderValue, COOKIE};
-use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper};
+use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper, implementation_utils};
 use crate::environment::{environment};
+use crate::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
 
-pub struct LetterboxdBrowserAPIWrapper {
-    client: Client,
-}
+init_new_browser_api_wrapper!(LetterboxdBrowserAPIWrapper);
 
 impl APIWrapper for LetterboxdBrowserAPIWrapper {
     fn get_name(&self) -> &str {
@@ -13,18 +13,47 @@ impl APIWrapper for LetterboxdBrowserAPIWrapper {
     }
 }
 
-impl BrowserAPIWrapper for LetterboxdBrowserAPIWrapper {}
+impl_browser_api_wrapper!(LetterboxdBrowserAPIWrapper);
 
 impl LetterboxdBrowserAPIWrapper {
-    // TODO: move this to a generic BrowserAPIWrapper. This will stay the same for every Browser
-    // wrapper.
-    pub async fn new() -> Self {
-        Self {
-            client: ClientBuilder::native()
-                .connect("http://localhost:4444")
-                .await
-                .expect("Failed to connect to WebDriver on port 4444! Is it surely running?"),
-        }
+    pub async fn export_data(&self) -> Vec<u8> {
+        let auth_cookie = self.client
+            .get_named_cookie("letterboxd.user.CURRENT")
+            .await
+            .expect("Failed to get the `letterboxd.user.CURRENT` cookie! Make sure that the client is loggged in!");
+        let formatted_auth_cookie = format!("letterboxd.user.CURRENT={};", auth_cookie.value());
+
+        let http_client = reqwest::Client::new();
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            COOKIE,
+            HeaderValue::from_str(&formatted_auth_cookie)
+                .expect("Failed to get a valid auth cookie!")
+        );
+
+        let response = http_client
+            .get("https://letterboxd.com/data/export")
+            .headers(headers)
+            .send()
+            .await
+            .expect("Failed to download letterboxd export data!");
+
+        let bytes = response
+            .bytes()
+            .await
+            .expect("Failed to read raw file from downloaded Letterboxd backup package!");
+
+        bytes.to_vec()
+    }
+
+    pub async fn launch(&self) {
+        self.login().await;
+    }
+
+    // TODO: Is this surely working as expected?
+    pub async fn close(self) {
+        self.client.close().await.expect("Failed to close the browser!");
     }
 
     async fn login(&self) {
@@ -62,46 +91,5 @@ impl LetterboxdBrowserAPIWrapper {
             .for_element(Locator::Css(".site-logo"))
             .await
             .expect("Failed to wait for the login to finish.");
-    }
-
-    pub async fn export_data(&self) -> Vec<u8> {
-        let auth_cookie = self.client
-            .get_named_cookie("letterboxd.user.CURRENT")
-            .await
-            .expect("Failed to get the `letterboxd.user.CURRENT` cookie! Make sure that the client is loggged in!");
-        let formatted_auth_cookie = format!("letterboxd.user.CURRENT={};", auth_cookie.value());
-
-        let http_client = reqwest::Client::new();
-
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            COOKIE,
-            HeaderValue::from_str(&formatted_auth_cookie)
-                .expect("Failed to get a valid auth cookie!")
-        );
-
-        let response = http_client
-            .get("https://letterboxd.com/data/export")
-            .headers(headers)
-            .send()
-            .await
-            .expect("Failed to download letterboxd export data!");
-
-        let bytes = response
-            .bytes()
-            .await
-            .expect("Failed to read raw file from downloaded Letterboxd backup package!");
-
-        bytes.to_vec()
-    }
-
-    pub async fn launch(&self) {
-        self.init().await;
-        self.login().await;
-    }
-
-    // TODO: something's wrong here...
-    pub async fn close(self) {
-        self.client.close().await.expect("Failed to close the browser!");
     }
 }
