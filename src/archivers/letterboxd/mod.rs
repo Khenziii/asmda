@@ -16,8 +16,6 @@ impl InstantArchiver for LetterboxdArchiver {
         let data = lettterboxd_wrapper.export_data().await;
         lettterboxd_wrapper.close().await;
 
-        println!("Received data: {:?}", data);
-
         data
     }
 }

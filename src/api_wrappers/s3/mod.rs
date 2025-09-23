@@ -56,9 +56,11 @@ impl S3Client {
         this
     }
 
-    pub async fn upload(&self, data: Vec<u8>) {
-        // TODO: when trying to upload a file (Vec<u8>), request app name. Once you have it, check
-        // if the directory `<app_name>` exists in the bucket. If it does, create a folder in that
-        // directory with the name of current date. Upload the binary data there.
+    pub async fn upload(&self, app_name: &str, filename: &str, data: Vec<u8>) {
+        let object_path = format!("{}/{}/{}", self.bucket.name, app_name, filename);
+        self.bucket
+            .put_object(object_path, &data)
+            .await
+            .expect("Failed to upload the file to S3!");
     }
 }
