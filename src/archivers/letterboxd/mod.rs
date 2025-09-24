@@ -1,11 +1,12 @@
 use crate::archivers::{Archiver, InstantArchiver};
 use crate::api_wrappers::browser::letterboxd::LetterboxdBrowserAPIWrapper;
+use crate::utils::constants::ArchiverIdentificator;
 
 pub struct LetterboxdArchiver;
 
 impl Archiver for LetterboxdArchiver {
-    fn get_name(&self) -> &str {
-        "letterboxd"
+    fn get_identificator(&self) -> ArchiverIdentificator {
+        ArchiverIdentificator::Letterboxd
     }
 }
 

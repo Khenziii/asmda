@@ -1,14 +1,15 @@
 use s3::{Region, Bucket, BucketConfiguration, creds::Credentials};
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
+use crate::utils::constants::{APIWrapperIdentificator};
 
 pub struct S3Client {
     bucket: Bucket,
 }
 
 impl APIWrapper for S3Client {
-    fn get_name(&self) -> &str {
-        "s3"
+    fn get_identificator(&self) -> APIWrapperIdentificator {
+        APIWrapperIdentificator::S3
     }
 }
 

@@ -4,12 +4,13 @@ use reqwest::header::{HeaderValue, COOKIE};
 use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper, implementation_utils};
 use crate::environment::{environment};
 use crate::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
+use crate::utils::constants::APIWrapperIdentificator;
 
 init_new_browser_api_wrapper!(LetterboxdBrowserAPIWrapper);
 
 impl APIWrapper for LetterboxdBrowserAPIWrapper {
-    fn get_name(&self) -> &str {
-        "letterboxd_browser"
+    fn get_identificator(&self) -> APIWrapperIdentificator {
+        APIWrapperIdentificator::Letterboxd
     }
 }
 
