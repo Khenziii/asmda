@@ -2,15 +2,15 @@ mod archivers;
 mod api_wrappers;
 mod environment;
 mod utils;
+mod schedule;
 
-use archivers::*;
+use schedule::Scheduler;
+use std::thread;
 
 #[tokio::main]
 async fn main() {
-    let letterboxd_archiver = archivers::letterboxd::LetterboxdArchiver {};
-    println!("{}", letterboxd_archiver.get_identificator().as_str());
-    let data = letterboxd_archiver.get_data().await;
+    let mut scheduler = Scheduler::new();
+    scheduler.run().await;
 
-    let s3 = api_wrappers::s3::S3Client::new().await;
-    s3.upload(letterboxd_archiver.get_identificator().as_str(), "backup.zip", data).await;
+    thread::park();
 }
