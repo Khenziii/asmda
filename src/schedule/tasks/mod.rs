@@ -1,18 +1,21 @@
 mod letterboxd;
 
+use std::future::Future;
+use std::pin::Pin;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
-type Callback = Mutex<Box<dyn FnMut() + Send>>;
+type Callback = Box<dyn FnMut() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>;
+type ThreadCallback = Mutex<Callback>;
 
 pub struct Task {
     next_run: Instant,
     interval: Duration,
-    callback: Callback,
+    callback: ThreadCallback,
 }
 
 impl Task {
-    pub fn new(interval: Duration, callback: Callback) -> Self {
+    pub fn new(interval: Duration, callback: ThreadCallback) -> Self {
         Self {
             interval,
             callback,
@@ -31,19 +34,22 @@ impl Task {
         time_until_next_run
     }
 
-    pub fn run(&mut self) {
+    pub async fn run(&mut self) {
         self.next_run += self.interval;
 
-        let mut callback = self.callback
-            .lock()
-            .expect("Failed to access callback!");
-        (*callback)();
+        let future = {
+            let mut callback = self.callback
+                .lock()
+                .expect("Failed to access callback!");
+            (callback)()
+        };
+        future.await;
     }
 }
 
 pub struct TaskConfig {
     run_interval_seconds: u64,
-    callback: Box<dyn FnMut() + Send>,
+    callback: Callback,
 }
 
 #[macro_export]
@@ -56,6 +62,13 @@ macro_rules! init_new_task {
             )
         }
     }
+}
+
+#[macro_export]
+macro_rules! task_callback {
+    ($func:path) => {
+        Box::new(|| Box::pin($func()))
+    };
 }
 
 pub fn get_tasks() -> Vec<Task> {
