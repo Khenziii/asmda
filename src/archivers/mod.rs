@@ -1,9 +1,10 @@
 pub mod letterboxd;
 
 use std::future::Future;
+use crate::utils::constants::ArchiverIdentificator;
 
 pub trait Archiver {
-    fn get_name(&self) -> &str;
+    fn get_identificator(&self) -> ArchiverIdentificator;
 }
 
 // For platforms that support instantly exporting data.
