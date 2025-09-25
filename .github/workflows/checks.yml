@@ -1,0 +1,20 @@
+# TODO: add formatting check
+# TODO: add tests check
+
+name: "Checks"
+on:
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-check:
+    name: 🗿 Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: cargo build --release

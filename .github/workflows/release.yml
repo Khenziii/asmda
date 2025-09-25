@@ -1,0 +1,61 @@
+# TODO: add version to binaries' name. It is accessible like so:
+# ${{ github.ref_name }}
+# TODO: add docker containerization
+
+name: "Build binaries and Docker images"
+on:
+  release:
+    types: [published]
+
+jobs:
+  binaries:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets:
+          - x86_64-unknown-linux-gnu
+          - x86_64-pc-windows-gnu
+          - i686-unknown-linux-gnu
+          - i686-pc-windows-gnu
+          - aarch64-unknown-linux-gnu
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install cross
+        run: cargo install cross
+
+      - name: Add targets
+        run: rustup target add ${{ matrix.targets }}
+
+      - name: Build for ${{ matrix.targets }}
+        run: cross build --release --target ${{ matrix.targets }}
+
+      - name: Upload Binary To Release (Linux & MacOS)
+        if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/${{ matrix.targets }}/release/asmda
+          asset_name: asmda-${{ matrix.targets }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload Binary To Release (Windows)
+        if: contains(matrix.targets, 'windows')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/${{ matrix.targets }}/release/asmda.exe
+          asset_name: asmda-${{ matrix.targets }}.exe
+          asset_content_type: application/octet-stream

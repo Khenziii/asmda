@@ -1,0 +1,30 @@
+name: "Push"
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: Checks
+    uses: ./.github/workflows/check.yml
+
+  push:
+    needs:
+      - checks
+    name: 🚀 Push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Login to Github's Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Build and push updated Docker image (:latest)
