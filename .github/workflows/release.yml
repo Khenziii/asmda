@@ -42,7 +42,7 @@ jobs:
         if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./target/${{ matrix.targets }}/release/asmda
@@ -53,7 +53,7 @@ jobs:
         if: contains(matrix.targets, 'windows')
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./target/${{ matrix.targets }}/release/asmda.exe
