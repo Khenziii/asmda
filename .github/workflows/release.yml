@@ -58,14 +58,14 @@ jobs:
       - name: Add targets
         run: rustup target add ${{ matrix.targets }}
 
-      - name: Build for ${{ matrix.targets }}
-        run: cross build --release --target ${{ matrix.targets }}
-
       - name: Install required dependencies
         if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
         run: |
           sudo apt-get update
           sudo apt-get install -y openssl
+
+      - name: Build for ${{ matrix.targets }}
+        run: cross build --release --target ${{ matrix.targets }}
 
       - name: Upload binary to release (Linux & MacOS)
         if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
