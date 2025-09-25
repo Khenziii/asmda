@@ -61,6 +61,12 @@ jobs:
       - name: Build for ${{ matrix.targets }}
         run: cross build --release --target ${{ matrix.targets }}
 
+      - name: Install required dependencies
+        if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssl
+
       - name: Upload binary to release (Linux & MacOS)
         if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
         uses: actions/upload-release-asset@v1
@@ -69,7 +75,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./target/${{ matrix.targets }}/release/asmda
-          asset_name: asmda-${{ matrix.targets }}
+          asset_name: asmda-${{ github.ref_name }}-${{ matrix.targets }}
           asset_content_type: application/octet-stream
 
       - name: Upload binary to release (Windows)
@@ -80,5 +86,5 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./target/${{ matrix.targets }}/release/asmda.exe
-          asset_name: asmda-${{ matrix.targets }}.exe
+          asset_name: asmda-${{ github.ref_name }}-${{ matrix.targets }}.exe
           asset_content_type: application/octet-stream

@@ -52,7 +52,6 @@ impl LetterboxdBrowserAPIWrapper {
         self.login().await;
     }
 
-    // TODO: Is this surely working as expected?
     pub async fn close(self) {
         self.client.close().await.expect("Failed to close the browser!");
     }
