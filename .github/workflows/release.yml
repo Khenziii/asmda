@@ -1,8 +1,4 @@
-# TODO: add version to binaries' name. It is accessible like so:
-# ${{ github.ref_name }}
-# TODO: add docker containerization
-
-name: "Build binaries and Docker images"
+name: "Release binaries and the Docker image"
 on:
   release:
     types: [published]
@@ -11,6 +7,28 @@ jobs:
   checks:
     name: Checks
     uses: ./.github/workflows/checks.yml
+  docker:
+    needs:
+      - checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub's container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ghcr.io/khenziii/asmda:${{ github.ref_name }}
   binaries:
     needs:
       - checks
@@ -43,7 +61,7 @@ jobs:
       - name: Build for ${{ matrix.targets }}
         run: cross build --release --target ${{ matrix.targets }}
 
-      - name: Upload Binary To Release (Linux & MacOS)
+      - name: Upload binary to release (Linux & MacOS)
         if: contains(matrix.targets, 'linux') || contains(matrix.targets, 'darwin')
         uses: actions/upload-release-asset@v1
         env:
@@ -54,7 +72,7 @@ jobs:
           asset_name: asmda-${{ matrix.targets }}
           asset_content_type: application/octet-stream
 
-      - name: Upload Binary To Release (Windows)
+      - name: Upload binary to release (Windows)
         if: contains(matrix.targets, 'windows')
         uses: actions/upload-release-asset@v1
         env:
