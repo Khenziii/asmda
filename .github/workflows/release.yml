@@ -41,7 +41,7 @@ jobs:
           - i686-unknown-linux-gnu
           # - i686-pc-windows-gnu
           - aarch64-unknown-linux-gnu
-          - aarch64-pc-windows-gnu
+          # - aarch64-pc-windows-gnu
       fail-fast: false
     steps:
       - name: Checkout code
