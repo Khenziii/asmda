@@ -18,7 +18,8 @@ mod implementation_utils {
     where
         T: BrowserAPIWrapper,
     {
-        let client = ClientBuilder::native()
+        let client = ClientBuilder::rustls()
+            .expect("Failed to use rustls to build a browser client!")
             .connect("http://localhost:4444")
             .await
             .expect("Failed to connect to WebDriver on port 4444! Is it surely running?");
