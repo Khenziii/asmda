@@ -41,6 +41,7 @@ jobs:
           - i686-unknown-linux-gnu
           - i686-pc-windows-gnu
           - aarch64-unknown-linux-gnu
+          - aarch64-pc-windows--gnu
       fail-fast: false
     steps:
       - name: Checkout code
@@ -57,6 +58,10 @@ jobs:
 
       - name: Add targets
         run: rustup target add ${{ matrix.targets }}
+
+      - name: Install required dependencies
+        if: contains(matrix.targets, 'windows')
+        run: cargo install --force --locked bindgen-cli
 
       - name: Build for ${{ matrix.targets }}
         run: cross build --release --target ${{ matrix.targets }}
