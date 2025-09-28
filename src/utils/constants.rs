@@ -5,6 +5,7 @@ pub enum ArchiverIdentificator {
 pub enum APIWrapperIdentificator {
     Letterboxd,
     S3,
+    Database,
 }
 
 impl ArchiverIdentificator {
@@ -20,6 +21,7 @@ impl APIWrapperIdentificator {
         match self {
             APIWrapperIdentificator::Letterboxd => "letterboxd",
             APIWrapperIdentificator::S3 => "s3",
+            APIWrapperIdentificator::Database => "database",
         }
     }
 }

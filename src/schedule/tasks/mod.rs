@@ -3,13 +3,13 @@ mod letterboxd;
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Mutex;
-use std::time::{Duration, Instant};
+use std::time::{Duration, SystemTime};
 
 type Callback = Box<dyn FnMut() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>;
 type ThreadCallback = Mutex<Callback>;
 
 pub struct Task {
-    next_run: Instant,
+    next_run: SystemTime,
     interval: Duration,
     callback: ThreadCallback,
 }
@@ -19,17 +19,16 @@ impl Task {
         Self {
             interval,
             callback,
-            next_run: Instant::now(),
+            next_run: SystemTime::now(),
         }
     }
 
     pub fn get_time_until_next_run(&self) -> Duration {
-        let now = Instant::now();
+        let now = SystemTime::now();
 
-        let time_until_next_run = if self.next_run > now {
-            self.next_run - now
-        } else {
-            Duration::from_secs(0)
+        let time_until_next_run = match self.next_run.duration_since(now) {
+            Ok(duration) => duration,
+            Err(_) => Duration::from_secs(0), // We're already past the date.
         };
         time_until_next_run
     }

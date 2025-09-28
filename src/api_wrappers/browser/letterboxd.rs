@@ -62,20 +62,20 @@ impl LetterboxdBrowserAPIWrapper {
             .await
             .expect("Navigation to `letterboxd.com/sign-in` failed!");
 
-        let environment = environment();
+        let config = environment();
 
         self.client
             .find(Locator::Id("field-username"))
             .await
             .expect("Failed to get `field-username` input!")
-            .send_keys(&environment.letterboxd.username)
+            .send_keys(&config.letterboxd.username)
             .await
             .expect("Failed to insert keys into `field-username` input!");
         self.client
             .find(Locator::Id("field-password"))
             .await
             .expect("Failed to get `field-password` input!")
-            .send_keys(&environment.letterboxd.password)
+            .send_keys(&config.letterboxd.password)
             .await
             .expect("Failed to insert keys into `field-password` input!");
         self.client
