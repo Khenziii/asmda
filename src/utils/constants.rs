@@ -1,7 +1,9 @@
+#[derive(Clone)]
 pub enum ArchiverIdentificator {
     Letterboxd,
 }
 
+#[derive(Clone)]
 pub enum APIWrapperIdentificator {
     Letterboxd,
     S3,

@@ -18,3 +18,14 @@ pub fn get_env_var_with_fallback(key: &str, fallback: &str) -> String {
 
     get_env_var(key)
 }
+
+pub fn get_database_path() -> String {
+    let running_environment = get_running_environment();
+
+    if running_environment == RunningEnvironment::Production {
+        // TODO: get the actual path using some kind of a library
+        return String::from("asmda.sqlite");
+    } else {
+        return String::from("asmda.sqlite");
+    }
+}

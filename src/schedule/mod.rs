@@ -22,8 +22,15 @@ impl Scheduler {
             tokio::spawn(async move {
                 loop {
                     let time_until_next_run = task.get_time_until_next_run();
+                    let app_name = task.get_app_name();
 
-                    logger::debug(&format!("next archive in {} seconds", time_until_next_run.as_secs()));
+                    logger::debug(
+                        &format!(
+                            "next archive of {} app in {} seconds",
+                            app_name.as_str(),
+                            time_until_next_run.as_secs()
+                        )
+                    );
 
                     tokio::time::sleep(time_until_next_run).await;
 

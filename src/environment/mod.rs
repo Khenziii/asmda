@@ -12,6 +12,7 @@ use utils::{
     get_running_environment,
     get_env_var,
     get_env_var_with_fallback,
+    get_database_path,
 };
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
@@ -20,6 +21,7 @@ pub fn environment() -> &'static Environment {
     ENVIRONMENT.get_or_init(|| {
         dotenv().ok();
         Environment {
+            database_path: get_database_path(),
             running_environment: get_running_environment(),
             letterboxd: LetterboxdEnvironment {
                 password: get_env_var("LETTERBOXD_PASSWORD"),
