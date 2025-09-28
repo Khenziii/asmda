@@ -1,3 +1,4 @@
+use dirs;
 use crate::environment::types::{RunningEnvironment};
 
 pub fn get_running_environment() -> RunningEnvironment {
@@ -17,4 +18,19 @@ pub fn get_env_var_with_fallback(key: &str, fallback: &str) -> String {
     }
 
     get_env_var(key)
+}
+
+pub fn get_database_path() -> String {
+    let running_environment = get_running_environment();
+
+    if running_environment == RunningEnvironment::Production {
+        dirs::data_dir()
+            .expect("Failed to get the data dir!")
+            .join("asmda.sqlite")
+            .to_str()
+            .expect("Failed to convert to str!")
+            .to_string()
+    } else {
+        String::from("asmda.sqlite")
+    }
 }

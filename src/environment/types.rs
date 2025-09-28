@@ -18,6 +18,7 @@ pub enum RunningEnvironment {
 }
 
 pub struct Environment {
+    pub database_path: String,
     pub letterboxd: LetterboxdEnvironment,
     pub s3: S3Environment,
     pub running_environment: RunningEnvironment,

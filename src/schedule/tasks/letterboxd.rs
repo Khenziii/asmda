@@ -4,6 +4,7 @@ use crate::schedule::tasks::{Task, TaskConfig};
 use crate::archivers::{Archiver, InstantArchiver};
 use crate::archivers::letterboxd::LetterboxdArchiver;
 use crate::api_wrappers::s3::S3Client;
+use crate::utils::constants::ArchiverIdentificator;
 use crate::{init_new_task, task_callback};
 
 async fn callback() {
@@ -17,4 +18,5 @@ async fn callback() {
 init_new_task!(TaskConfig {
     callback: task_callback!(callback),
     run_interval_seconds: 60,
+    app_name: ArchiverIdentificator::Letterboxd,
 });
