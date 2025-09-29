@@ -44,10 +44,7 @@ async fn get_main_bucket() -> Bucket {
             bucket_config.clone(),
         )
         .await
-        .unwrap_or_else(|_| panic!(
-            "Failed to create the `{}` bucket!",
-            &config.s3.bucket_name,
-        ));
+        .unwrap_or_else(|_| panic!("Failed to create the `{}` bucket!", &config.s3.bucket_name,));
     }
 
     *bucket

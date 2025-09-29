@@ -8,6 +8,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  rustfmt-check:
+    name: 👀 `rustfmt` Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run `cargo fmt`
+        run: cargo fmt -- --check
+  clippy-check:
+    name: 🧐 Clippy Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Clippy
+        run: cargo clippy
   build-check:
     name: 🗿 Build Check
     runs-on: ubuntu-latest

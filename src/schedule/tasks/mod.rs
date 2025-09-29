@@ -89,7 +89,5 @@ macro_rules! task_callback {
 }
 
 pub fn get_tasks() -> Vec<Task> {
-    vec![
-        letterboxd::get_task(),
-    ]
+    vec![letterboxd::get_task()]
 }
