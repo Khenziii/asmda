@@ -20,9 +20,9 @@ impl DatabaseClient {
     pub fn new() -> Self {
         let config = environment::environment();
 
-        let connection = Connection::open(&config.database_path).expect(&format!(
+        let connection = Connection::open(&config.database_path).unwrap_or_else(|_| panic!(
             "Failed to open `{}` database!",
-            &config.database_path
+            &config.database_path,
         ));
         connection
             .execute(

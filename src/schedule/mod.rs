@@ -3,7 +3,6 @@ mod tasks;
 use crate::logger;
 use std::mem::take;
 use tasks::{Task, get_tasks};
-use tokio;
 
 pub struct Scheduler {
     tasks: Vec<Task>,

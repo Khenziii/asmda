@@ -32,18 +32,17 @@ impl Task {
             callback,
             app_name,
             database,
-            next_run: next_run,
+            next_run,
         }
     }
 
     pub fn get_time_until_next_run(&self) -> Duration {
         let now = SystemTime::now();
 
-        let time_until_next_run = match self.next_run.duration_since(now) {
+        match self.next_run.duration_since(now) {
             Ok(duration) => duration,
             Err(_) => Duration::from_secs(0), // We're already past the date.
-        };
-        time_until_next_run
+        }
     }
 
     pub async fn run(&mut self) {
@@ -90,9 +89,7 @@ macro_rules! task_callback {
 }
 
 pub fn get_tasks() -> Vec<Task> {
-    let mut tasks = Vec::new();
-
-    tasks.push(letterboxd::get_task());
-
-    tasks
+    vec![
+        letterboxd::get_task(),
+    ]
 }

@@ -44,9 +44,9 @@ async fn get_main_bucket() -> Bucket {
             bucket_config.clone(),
         )
         .await
-        .expect(&format!(
+        .unwrap_or_else(|_| panic!(
             "Failed to create the `{}` bucket!",
-            &config.s3.bucket_name
+            &config.s3.bucket_name,
         ));
     }
 
@@ -56,9 +56,7 @@ async fn get_main_bucket() -> Bucket {
 impl S3Client {
     pub async fn new() -> Self {
         let bucket = get_main_bucket().await;
-        let this = S3Client { bucket };
-
-        this
+        S3Client { bucket }
     }
 
     pub async fn upload(&self, app_name: &str, filename: &str, data: Vec<u8>) {
