@@ -1,11 +1,11 @@
 mod letterboxd;
 
+use crate::api_wrappers::database::DatabaseClient;
+use crate::utils::constants::ArchiverIdentificator;
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Mutex;
 use std::time::{Duration, SystemTime};
-use crate::api_wrappers::database::DatabaseClient;
-use crate::utils::constants::ArchiverIdentificator;
 
 type Callback = Box<dyn FnMut() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>;
 type ThreadCallback = Mutex<Callback>;
@@ -48,15 +48,11 @@ impl Task {
 
     pub async fn run(&mut self) {
         self.next_run += self.interval;
-        self.database.update_next_run(
-            self.app_name.clone(),
-            self.next_run,
-        );
+        self.database
+            .update_next_run(self.app_name.clone(), self.next_run);
 
         let future = {
-            let mut callback = self.callback
-                .lock()
-                .expect("Failed to access callback!");
+            let mut callback = self.callback.lock().expect("Failed to access callback!");
             (callback)()
         };
         future.await;
@@ -83,7 +79,7 @@ macro_rules! init_new_task {
                 $config.app_name,
             )
         }
-    }
+    };
 }
 
 #[macro_export]

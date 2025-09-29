@@ -1,7 +1,7 @@
-use s3::{Region, Bucket, BucketConfiguration, creds::Credentials};
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
-use crate::utils::constants::{APIWrapperIdentificator};
+use crate::utils::constants::APIWrapperIdentificator;
+use s3::{Bucket, BucketConfiguration, Region, creds::Credentials};
 
 pub struct S3Client {
     bucket: Bucket,
@@ -26,7 +26,8 @@ async fn get_main_bucket() -> Bucket {
         None,
         None,
         None,
-    ).unwrap();
+    )
+    .unwrap();
     let bucket_config = BucketConfiguration::default();
 
     let bucket = Bucket::new(&config.s3.bucket_name, region.clone(), credentials.clone()).unwrap();
@@ -43,7 +44,10 @@ async fn get_main_bucket() -> Bucket {
             bucket_config.clone(),
         )
         .await
-        .expect(&format!("Failed to create the `{}` bucket!", &config.s3.bucket_name));
+        .expect(&format!(
+            "Failed to create the `{}` bucket!",
+            &config.s3.bucket_name
+        ));
     }
 
     *bucket

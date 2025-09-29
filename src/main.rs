@@ -1,12 +1,12 @@
-mod archivers;
 mod api_wrappers;
+mod archivers;
 mod environment;
-mod utils;
-mod schedule;
 mod logger;
+mod schedule;
+mod utils;
 
-use std::thread;
 use schedule::Scheduler;
+use std::thread;
 use utils::startup::startup;
 
 #[tokio::main]

@@ -1,7 +1,7 @@
 pub mod letterboxd;
 
-use std::future::Future;
 use crate::utils::constants::ArchiverIdentificator;
+use std::future::Future;
 
 pub trait Archiver {
     fn get_identificator(&self) -> ArchiverIdentificator;

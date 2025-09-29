@@ -1,8 +1,10 @@
+use crate::environment::types::RunningEnvironment;
 use dirs;
-use crate::environment::types::{RunningEnvironment};
 
 pub fn get_running_environment() -> RunningEnvironment {
-    if cfg!(debug_assertions) { return RunningEnvironment::Development; }
+    if cfg!(debug_assertions) {
+        return RunningEnvironment::Development;
+    }
     RunningEnvironment::Production
 }
 

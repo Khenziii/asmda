@@ -3,17 +3,8 @@ pub mod utils;
 
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
-use types::{
-    Environment,
-    LetterboxdEnvironment,
-    S3Environment,
-};
-use utils::{
-    get_running_environment,
-    get_env_var,
-    get_env_var_with_fallback,
-    get_database_path,
-};
+use types::{Environment, LetterboxdEnvironment, S3Environment};
+use utils::{get_database_path, get_env_var, get_env_var_with_fallback, get_running_environment};
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
 

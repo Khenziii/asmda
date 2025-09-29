@@ -1,5 +1,5 @@
-use crate::archivers::{Archiver, InstantArchiver};
 use crate::api_wrappers::browser::letterboxd::LetterboxdBrowserAPIWrapper;
+use crate::archivers::{Archiver, InstantArchiver};
 use crate::utils::constants::ArchiverIdentificator;
 
 pub struct LetterboxdArchiver;

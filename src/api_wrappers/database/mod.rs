@@ -1,10 +1,10 @@
-use rusqlite::{Connection, Error::QueryReturnedNoRows};
-use std::time::{SystemTime};
-use crate::logger;
-use crate::environment;
-use crate::utils::time::{str_to_system_time, system_time_to_str};
 use crate::api_wrappers::APIWrapper;
+use crate::environment;
+use crate::logger;
 use crate::utils::constants::{APIWrapperIdentificator, ArchiverIdentificator};
+use crate::utils::time::{str_to_system_time, system_time_to_str};
+use rusqlite::{Connection, Error::QueryReturnedNoRows};
+use std::time::SystemTime;
 
 pub struct DatabaseClient {
     connection: Connection,
@@ -20,24 +20,25 @@ impl DatabaseClient {
     pub fn new() -> Self {
         let config = environment::environment();
 
-        let connection = Connection::open(&config.database_path)
-            .expect(&format!("Failed to open `{}` database!", &config.database_path));
-        connection.execute(
-            "CREATE TABLE IF NOT EXISTS schedule (
+        let connection = Connection::open(&config.database_path).expect(&format!(
+            "Failed to open `{}` database!",
+            &config.database_path
+        ));
+        connection
+            .execute(
+                "CREATE TABLE IF NOT EXISTS schedule (
                 id          INTEGER PRIMARY KEY,
                 app_name    TEXT NOT NULL,
                 next_run    TEXT NOT NULL
             )",
-            []
-        ).expect("Failed to initialize database!");
+                [],
+            )
+            .expect("Failed to initialize database!");
 
         DatabaseClient { connection }
     }
 
-    pub fn get_next_run_by_app_name(
-        &self,
-        app_name: ArchiverIdentificator,
-    ) -> SystemTime {
+    pub fn get_next_run_by_app_name(&self, app_name: ArchiverIdentificator) -> SystemTime {
         let next_run_query_result = self.connection.query_row(
             "SELECT next_run FROM schedule WHERE app_name = ?1",
             [app_name.as_str()],
@@ -51,20 +52,21 @@ impl DatabaseClient {
         }
     }
 
-    pub fn update_next_run(
-        &self,
-        app_name: ArchiverIdentificator,
-        new_next_run: SystemTime,
-    ) {
+    pub fn update_next_run(&self, app_name: ArchiverIdentificator, new_next_run: SystemTime) {
         let new_next_run_string = system_time_to_str(new_next_run);
-        let amount_of_changed_rows = self.connection
+        let amount_of_changed_rows = self
+            .connection
             .execute(
                 "UPDATE schedule SET next_run = ?1 WHERE app_name = ?2",
                 [new_next_run_string.clone(), app_name.as_str().to_string()],
             )
             .expect("Failed to update next_run!");
 
-        logger::debug(&format!("updated the {}'s next_run to {}", app_name.as_str(), new_next_run_string));
+        logger::debug(&format!(
+            "updated the {}'s next_run to {}",
+            app_name.as_str(),
+            new_next_run_string
+        ));
 
         if amount_of_changed_rows == 0 {
             self.connection
