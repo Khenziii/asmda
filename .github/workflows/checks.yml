@@ -15,6 +15,9 @@ jobs:
 
       - name: Run `cargo test`
         run: cargo test
+        env:
+          LETTERBOXD_USERNAME: ${{ secrets.LETTERBOXD_USERNAME }}
+          LETTERBOXD_PASSWORD: ${{ secrets.LETTERBOXD_PASSWORD }}
   rustfmt-check:
     name: 👀 `rustfmt` Check
     runs-on: ubuntu-latest
