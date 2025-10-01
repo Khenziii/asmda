@@ -14,7 +14,7 @@ async fn callback() {
 
     let s3 = S3Client::new().await;
     s3.upload(
-        letterboxd_archiver.get_identificator().as_str(),
+        &letterboxd_archiver.get_identificator().as_str(),
         "backup.zip",
         data,
     )
