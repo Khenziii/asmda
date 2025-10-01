@@ -1,5 +1,3 @@
-# TODO: add tests check
-
 name: "Checks"
 on:
   pull_request:
@@ -7,6 +5,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests-check:
+    name: 🦀 Tests Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run `cargo test`
+        run: cargo test
   rustfmt-check:
     name: 👀 `rustfmt` Check
     runs-on: ubuntu-latest
