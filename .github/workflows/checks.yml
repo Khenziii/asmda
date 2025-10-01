@@ -1,6 +1,3 @@
-# TODO: add formatting check
-# TODO: add tests check
-
 name: "Checks"
 on:
   pull_request:
@@ -8,6 +5,39 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests-check:
+    name: 🦀 Tests Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run `cargo test`
+        run: cargo test
+        env:
+          LETTERBOXD_USERNAME: ${{ secrets.LETTERBOXD_USERNAME }}
+          LETTERBOXD_PASSWORD: ${{ secrets.LETTERBOXD_PASSWORD }}
+  rustfmt-check:
+    name: 👀 `rustfmt` Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run `cargo fmt`
+        run: cargo fmt -- --check
+  clippy-check:
+    name: 🧐 Clippy Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Clippy
+        run: cargo clippy
   build-check:
     name: 🗿 Build Check
     runs-on: ubuntu-latest

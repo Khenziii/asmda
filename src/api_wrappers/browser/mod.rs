@@ -1,6 +1,6 @@
+use crate::api_wrappers::APIWrapper;
 use async_trait::async_trait;
 use fantoccini::Client;
-use crate::api_wrappers::APIWrapper;
 
 pub mod letterboxd;
 
@@ -11,8 +11,8 @@ pub(super) trait BrowserAPIWrapper: APIWrapper {
 }
 
 mod implementation_utils {
-    use fantoccini::{ClientBuilder, Client};
     use crate::api_wrappers::browser::BrowserAPIWrapper;
+    use fantoccini::{Client, ClientBuilder};
 
     pub async fn default_constructor<T>(from_client: fn(Client) -> T) -> T
     where

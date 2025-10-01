@@ -1,7 +1,7 @@
-use s3::{Region, Bucket, BucketConfiguration, creds::Credentials};
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
-use crate::utils::constants::{APIWrapperIdentificator};
+use crate::utils::constants::APIWrapperIdentificator;
+use s3::{Bucket, BucketConfiguration, Region, creds::Credentials};
 
 pub struct S3Client {
     bucket: Bucket,
@@ -26,7 +26,8 @@ async fn get_main_bucket() -> Bucket {
         None,
         None,
         None,
-    ).unwrap();
+    )
+    .unwrap();
     let bucket_config = BucketConfiguration::default();
 
     let bucket = Bucket::new(&config.s3.bucket_name, region.clone(), credentials.clone()).unwrap();
@@ -43,7 +44,7 @@ async fn get_main_bucket() -> Bucket {
             bucket_config.clone(),
         )
         .await
-        .expect(&format!("Failed to create the `{}` bucket!", &config.s3.bucket_name));
+        .unwrap_or_else(|_| panic!("Failed to create the `{}` bucket!", &config.s3.bucket_name,));
     }
 
     *bucket
@@ -52,9 +53,7 @@ async fn get_main_bucket() -> Bucket {
 impl S3Client {
     pub async fn new() -> Self {
         let bucket = get_main_bucket().await;
-        let this = S3Client { bucket };
-
-        this
+        S3Client { bucket }
     }
 
     pub async fn upload(&self, app_name: &str, filename: &str, data: Vec<u8>) {

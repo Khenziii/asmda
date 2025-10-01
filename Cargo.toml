@@ -16,3 +16,9 @@ rust-s3 = { version = "0.36.0", default-features = false, features = ["tokio-rus
 rustls = { version = "0.23.32", features = ["ring"] }
 serde_json = "1.0.143"
 tokio = { version = "1.47.1", features = ["full"] }
+
+[lints.clippy]
+redundant_field_names = "deny"
+let_and_return = "deny"
+expect_fun_call = "deny"
+vec_init_then_push = "deny"

@@ -1,9 +1,11 @@
-use colored::Colorize;
 use crate::environment::{environment, types::RunningEnvironment};
+use colored::Colorize;
 
 pub fn debug(log: &str) {
     let config = environment();
-    if config.running_environment == RunningEnvironment::Production { return }
+    if config.running_environment == RunningEnvironment::Production {
+        return;
+    }
 
     println!("{}", &log.blue());
 }

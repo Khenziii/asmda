@@ -1,10 +1,10 @@
+use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper, implementation_utils};
+use crate::environment::environment;
+use crate::utils::constants::APIWrapperIdentificator;
+use crate::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
 use async_trait::async_trait;
 use fantoccini::{Client, Locator};
-use reqwest::header::{HeaderValue, COOKIE};
-use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper, implementation_utils};
-use crate::environment::{environment};
-use crate::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
-use crate::utils::constants::APIWrapperIdentificator;
+use reqwest::header::{COOKIE, HeaderValue};
 
 init_new_browser_api_wrapper!(LetterboxdBrowserAPIWrapper);
 
@@ -30,7 +30,7 @@ impl LetterboxdBrowserAPIWrapper {
         headers.insert(
             COOKIE,
             HeaderValue::from_str(&formatted_auth_cookie)
-                .expect("Failed to get a valid auth cookie!")
+                .expect("Failed to get a valid auth cookie!"),
         );
 
         let response = http_client
@@ -53,7 +53,10 @@ impl LetterboxdBrowserAPIWrapper {
     }
 
     pub async fn close(self) {
-        self.client.close().await.expect("Failed to close the browser!");
+        self.client
+            .close()
+            .await
+            .expect("Failed to close the browser!");
     }
 
     async fn login(&self) {
