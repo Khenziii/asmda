@@ -1,8 +1,8 @@
+use asmda::logger;
 use asmda::schedule;
 use asmda::schedule::tasks::Task;
 use asmda::schedule::tasks::utils::types::TaskConfig;
 use asmda::utils::constants;
-use asmda::logger;
 use asmda::{init_new_task, task_callback};
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
@@ -120,13 +120,16 @@ mod tests {
             // whether the process restarted or not. Verify that latest execution time is equal to
             // `start_timestamp` + 5 seconds.
             let latest_execution_timestamp = THIRD_TIMER.lock().unwrap().clone();
-            let latest_timestamps_seconds = latest_execution_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+            let latest_timestamps_seconds = latest_execution_timestamp
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
             let adjusted_start_timestamp = start_timestamp + Duration::from_secs(5);
-            let adjusted_start_timestamp_seconds = adjusted_start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
-            assert_eq!(
-                latest_timestamps_seconds,
-                adjusted_start_timestamp_seconds,
-            );
+            let adjusted_start_timestamp_seconds = adjusted_start_timestamp
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
+            assert_eq!(latest_timestamps_seconds, adjusted_start_timestamp_seconds,);
         }
     }
 }

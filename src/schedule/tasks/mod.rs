@@ -1,10 +1,10 @@
-pub mod utils;
 mod letterboxd;
+pub mod utils;
 
 use crate::api_wrappers::database::DatabaseClient;
 use crate::utils::constants::ArchiverIdentificator;
-use utils::types::ThreadCallback;
 use std::time::{Duration, SystemTime};
+use utils::types::ThreadCallback;
 
 pub struct Task {
     next_run: SystemTime,
