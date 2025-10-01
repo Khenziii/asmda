@@ -1,9 +1,10 @@
+use crate::{init_new_task, task_callback};
+use crate::archivers::{Archiver, InstantArchiver};
 use crate::api_wrappers::s3::S3Client;
 use crate::archivers::letterboxd::LetterboxdArchiver;
-use crate::archivers::{Archiver, InstantArchiver};
-use crate::schedule::tasks::{Task, TaskConfig};
 use crate::utils::constants::ArchiverIdentificator;
-use crate::{init_new_task, task_callback};
+use crate::schedule::tasks::utils::types::TaskConfig;
+use crate::schedule::tasks::Task;
 use std::sync::Mutex;
 use std::time::Duration;
 

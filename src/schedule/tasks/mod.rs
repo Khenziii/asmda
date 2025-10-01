@@ -1,14 +1,10 @@
+pub mod utils;
 mod letterboxd;
 
 use crate::api_wrappers::database::DatabaseClient;
 use crate::utils::constants::ArchiverIdentificator;
-use std::future::Future;
-use std::pin::Pin;
-use std::sync::Mutex;
+use utils::types::ThreadCallback;
 use std::time::{Duration, SystemTime};
-
-type Callback = Box<dyn FnMut() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>;
-type ThreadCallback = Mutex<Callback>;
 
 pub struct Task {
     next_run: SystemTime,
@@ -62,32 +58,6 @@ impl Task {
     }
 }
 
-pub struct TaskConfig {
-    run_interval_seconds: u64,
-    callback: Callback,
-    app_name: ArchiverIdentificator,
-}
-
-#[macro_export]
-macro_rules! init_new_task {
-    ($config:expr) => {
-        pub fn get_task() -> Task {
-            Task::new(
-                Duration::from_secs($config.run_interval_seconds),
-                Mutex::new($config.callback),
-                $config.app_name,
-            )
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! task_callback {
-    ($func:path) => {
-        Box::new(|| Box::pin($func()))
-    };
-}
-
-pub fn get_tasks() -> Vec<Task> {
+pub fn get_all_tasks() -> Vec<Task> {
     vec![letterboxd::get_task()]
 }

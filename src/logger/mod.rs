@@ -6,7 +6,7 @@ pub fn debug(log: &str) {
     if config.running_environment == RunningEnvironment::Production {
         return;
     }
-
+    
     println!("{}", &log.blue());
 }
 
