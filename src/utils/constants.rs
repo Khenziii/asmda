@@ -1,11 +1,7 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use crate::utils::uuid;
 
-fn get_current_time_string() -> String {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs()
-        .to_string()
+fn tests_identificator_as_str() -> String {
+    format!("tests_{}", &uuid::get_random())
 }
 
 #[derive(Clone)]
@@ -25,7 +21,7 @@ pub enum APIWrapperIdentificator {
 impl ArchiverIdentificator {
     pub fn as_str(&self) -> String {
         match self {
-            ArchiverIdentificator::Tests => format!("tests_{}", &get_current_time_string()),
+            ArchiverIdentificator::Tests => tests_identificator_as_str(),
             ArchiverIdentificator::Letterboxd => "letterboxd".to_string(),
         }
     }
@@ -34,7 +30,7 @@ impl ArchiverIdentificator {
 impl APIWrapperIdentificator {
     pub fn as_str(&self) -> String {
         match self {
-            APIWrapperIdentificator::Tests => "tests".to_string(),
+            APIWrapperIdentificator::Tests => tests_identificator_as_str(),
             APIWrapperIdentificator::Letterboxd => "letterboxd".to_string(),
             APIWrapperIdentificator::S3 => "s3".to_string(),
             APIWrapperIdentificator::Database => "database".to_string(),

@@ -17,6 +17,11 @@ rustls = { version = "0.23.32", features = ["ring"] }
 serde_json = "1.0.143"
 tokio = { version = "1.47.1", features = ["full"] }
 
+[dependencies.uuid]
+version = "1.18.1"
+# Allows generating custom UUIDs.
+features = ["v4"]
+
 [lints.clippy]
 redundant_field_names = "deny"
 let_and_return = "deny"
