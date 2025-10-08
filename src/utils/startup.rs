@@ -1,5 +1,5 @@
-use crate::logger;
 use crate::environment;
+use crate::logger;
 use rustls;
 
 pub fn show_environment_if_in_dev_env() {

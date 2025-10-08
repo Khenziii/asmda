@@ -3,7 +3,8 @@ use crate::utils::encryption::Decryptor;
 use dirs;
 
 pub fn as_boolean(value: String) -> bool {
-    value.parse::<bool>()
+    value
+        .parse::<bool>()
         .expect(&format!("Failed to cast {} into a boolean!", &value))
 }
 
@@ -13,7 +14,6 @@ pub fn get_running_environment() -> RunningEnvironment {
     }
     RunningEnvironment::Production
 }
-
 
 pub fn get_database_path() -> String {
     let running_environment = get_running_environment();
@@ -47,7 +47,9 @@ pub fn get_env_var_by_name_with_fallback(key: &str, fallback: &str) -> String {
 pub fn get_env_var(variable: EnvironmentVariable) -> String {
     let using_encryption_str = get_env_var_by_name_with_fallback(
         &EnvironmentVariable::SecretsAreEncrypted.as_str(),
-        &EnvironmentVariable::SecretsAreEncrypted.get_fallback_value().unwrap(),
+        &EnvironmentVariable::SecretsAreEncrypted
+            .get_fallback_value()
+            .unwrap(),
     );
     let using_encryption = as_boolean(using_encryption_str);
 

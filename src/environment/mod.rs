@@ -1,12 +1,12 @@
-pub mod utils;
 pub mod constants;
 pub mod types;
+pub mod utils;
 
+use constants::EnvironmentVariable::*;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
-use constants::EnvironmentVariable::*;
-use types::{Environment, LetterboxdEnvironment, S3Environment, Metadata, SecretsEnvironment};
-use utils::{get_database_path, get_env_var, get_running_environment, as_boolean};
+use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment};
+use utils::{as_boolean, get_database_path, get_env_var, get_running_environment};
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
 
