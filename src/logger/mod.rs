@@ -3,7 +3,7 @@ use colored::Colorize;
 
 pub fn debug(log: &str) {
     let config = environment();
-    if config.running_environment == RunningEnvironment::Production {
+    if config.metadata.running_environment == RunningEnvironment::Production {
         return;
     }
 

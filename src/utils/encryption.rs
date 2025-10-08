@@ -1,6 +1,7 @@
+use crate::utils::multithreading;
 use pgp::{decrypt as pgp_decrypt, native::SignedSecretKey, read_skey_from_string};
 
-struct Decryptor {
+pub struct Decryptor {
     key: SignedSecretKey,
     key_password: String,
 }
@@ -13,11 +14,19 @@ impl Decryptor {
         Self { key, key_password }
     }
 
+    pub fn new_sync(key_str: String, key_password: String) -> Self {
+        multithreading::block_on(Decryptor::new(key_str, key_password))
+    }
+
     pub async fn decrypt(&self, encrypted: String) -> String {
         let decrypted_bytes = pgp_decrypt(self.key.clone(), &self.key_password, encrypted.into())
             .await
             .expect("Failed to decrypt passed string!");
-        String::from_utf8(decrypted_bytes).unwrap()
+        String::from_utf8(decrypted_bytes).unwrap().trim_end().to_string()
+    }
+
+    pub fn decrypt_sync(&self, encrypted: String) -> String {
+        multithreading::block_on(self.decrypt(encrypted))
     }
 }
 
@@ -130,13 +139,13 @@ zN97LZpXsLzANKqXEcWA0kwBJNlrBe68fDPvq23AIRRTdK+USzItQb0b+gX5YhfJ
 xvqCU/aKn1UoOkqcfJ820sbW+/2MPMYhC9WcaTiwdX9efVJWqlUXyfSqXJPQ
 =caX1
 -----END PGP MESSAGE-----
-            ");
+");
             let test_raw_message = String::from("Komm, susser Tod");
 
             let decryptor = Decryptor::new(test_private_key, test_private_key_password).await;
             let decrypted_raw_message = decryptor.decrypt(test_encrypted_message).await;
 
-            assert_eq!(test_raw_message, decrypted_raw_message.trim_end());
+            assert_eq!(test_raw_message, decrypted_raw_message);
         }
     }
 }

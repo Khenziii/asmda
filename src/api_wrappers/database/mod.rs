@@ -20,8 +20,8 @@ impl DatabaseClient {
     pub fn new() -> Self {
         let config = environment::environment();
 
-        let connection = Connection::open(&config.database_path)
-            .unwrap_or_else(|_| panic!("Failed to open `{}` database!", &config.database_path,));
+        let connection = Connection::open(&config.metadata.database_path)
+            .unwrap_or_else(|_| panic!("Failed to open `{}` database!", &config.metadata.database_path));
         connection
             .execute(
                 "CREATE TABLE IF NOT EXISTS schedule (
