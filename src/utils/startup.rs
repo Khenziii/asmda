@@ -1,9 +1,21 @@
+use crate::logger;
+use crate::environment;
 use rustls;
+
+pub fn show_environment_if_in_dev_env() {
+    let config = environment::environment();
+    let config_stringified = format!("{:#?}", config);
+
+    logger::debug("Current environment:");
+    logger::debug(&config_stringified);
+}
 
 pub fn startup() {
     rustls::crypto::ring::default_provider()
         .install_default()
         .expect("Failed to install rustls crypto provider!");
+
+    show_environment_if_in_dev_env();
 }
 
 #[cfg(test)]

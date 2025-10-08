@@ -1,15 +1,18 @@
 pub use crate::environment::constants::RunningEnvironment;
 
+#[derive(Debug)]
 pub struct Metadata {
     pub running_environment: RunningEnvironment,
     pub database_path: String,
 }
 
+#[derive(Debug)]
 pub struct LetterboxdEnvironment {
     pub password: String,
     pub username: String,
 }
 
+#[derive(Debug)]
 pub struct S3Environment {
     pub region: String,
     pub url: String,
@@ -18,12 +21,15 @@ pub struct S3Environment {
     pub secret_key: String,
 }
 
+#[derive(Debug)]
 pub struct SecretsEnvironment {
     // Whether the raw values of the secrets (passed via environment variables) are encrypted or
     // not. Anything accessed via this program's `environment::environment` method will already
     // be decrypted for you.
     pub are_encrypted: bool,
 }
+
+#[derive(Debug)]
 pub struct Environment {
     // All additional data that is handy to have returned by the `environment` method, but isn't
     // configurable by environment variables.
