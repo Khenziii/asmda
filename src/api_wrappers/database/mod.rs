@@ -16,6 +16,12 @@ impl APIWrapper for DatabaseClient {
     }
 }
 
+impl Default for DatabaseClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl DatabaseClient {
     pub fn new() -> Self {
         let config = environment::environment();
