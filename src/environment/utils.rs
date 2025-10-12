@@ -5,7 +5,7 @@ use dirs;
 pub fn as_boolean(value: String) -> bool {
     value
         .parse::<bool>()
-        .expect(&format!("Failed to cast {} into a boolean!", &value))
+        .unwrap_or_else(|_| panic!("Failed to cast {} into a boolean!", &value))
 }
 
 pub fn get_running_environment() -> RunningEnvironment {

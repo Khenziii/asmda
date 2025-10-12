@@ -7,6 +7,5 @@ where
     F: Future<Output = T>,
 {
     let runtime = runtime::Handle::current();
-    let return_value = runtime.block_on(future);
-    return_value
+    runtime.block_on(future)
 }

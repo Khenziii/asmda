@@ -29,10 +29,10 @@ impl DatabaseClient {
         connection
             .execute(
                 "CREATE TABLE IF NOT EXISTS schedule (
-                id          INTEGER PRIMARY KEY,
-                app_name    TEXT NOT NULL,
-                next_run    TEXT NOT NULL
-            )",
+                    id          INTEGER PRIMARY KEY,
+                    app_name    TEXT NOT NULL,
+                    next_run    TEXT NOT NULL
+                )",
                 [],
             )
             .expect("Failed to initialize database!");

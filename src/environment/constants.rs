@@ -57,10 +57,6 @@ impl EnvironmentVariable {
             Self::S3SecretKey => Some("developmentpassword"),
             Self::SecretsAreEncrypted => Some("false"),
         };
-
-        match value {
-            Some(value) => Some(value.to_string()),
-            None => None,
-        }
+        value.map(|value| value.to_string())
     }
 }
