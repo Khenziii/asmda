@@ -9,6 +9,28 @@ jobs:
     name: 🦀 Tests Check
     runs-on: ubuntu-latest
 
+    services:
+      selenium:
+        image: selenium/standalone-firefox:141.0-20250828
+        ports:
+          - 4444:4444
+          - 7900:7900
+      # TODO: uncomment when minio becomes needed for tests, as
+      # of right now there's no point having this.
+      # minio:
+      #   image: minio/minio:RELEASE.2024-11-07T00-52-20Z.fips
+      #   env:
+      #     MINIO_ROOT_USER: developmentuser
+      #     MINIO_ROOT_PASSWORD: developmentpassword
+      #     MINIO_ADDRESS: ":9000"
+      #     MINIO_CONSOLE_ADDRESS: ":9001"
+      #   ports:
+      #     - 9000:9000
+      #     - 9001:9001
+      #   volumes:
+      #     - minio-storage:/data
+      #   command: server /data
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
