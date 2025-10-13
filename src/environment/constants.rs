@@ -5,7 +5,7 @@ pub enum RunningEnvironment {
 }
 
 // All supported environment variables.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum EnvironmentVariable {
     LetterboxdPassword,
     LetterboxdUsername,

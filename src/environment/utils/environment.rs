@@ -9,7 +9,7 @@ pub trait EnvironmentVariableGetterResultParser {
 impl EnvironmentVariableGetterResultParser for String {
     fn from_result(value: Option<String>, context: EnvironmentVariable) -> Self {
         match value {
-            Some(v) => v,
+            Some(v) => v.replace("\\n", "\n"),
             None if context.is_required() => panic!("Environment variable {} not set!", context.as_str()),
             None => String::from(""),
         }
@@ -18,7 +18,10 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        value
+        match value {
+            Some(v) => Some(v.replace("\\n", "\n")),
+            None => None,
+        }
     }
 }
 
@@ -41,9 +44,13 @@ pub fn get_env_var<T: EnvironmentVariableGetterResultParser>(variable: Environme
     let using_encryption = as_boolean(using_encryption_str);
 
     let mut value = get_env_var_by_with_potential_fallback::<Option<String>>(variable.clone());
+    let value_same_as_fallback = value == variable.get_development_fallback_value();
 
-    if variable.can_be_encrypted() && using_encryption && value.is_some() {
-        let decryptor = Decryptor::new_sync("todo".to_string(), "todo".to_string());
+    if variable.can_be_encrypted() && using_encryption && value.is_some() && !value_same_as_fallback {
+        let key = get_env_var_by_with_potential_fallback::<String>(EnvironmentVariable::SecretsDecryptionKey);
+        let key_passphrase = get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKeyPassphrase);
+
+        let decryptor = Decryptor::new_sync(key, key_passphrase);
         let decrypted = decryptor.decrypt_sync(value.unwrap());
         value = Some(decrypted);
     }
