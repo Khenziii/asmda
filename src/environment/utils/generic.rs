@@ -1,25 +1,17 @@
-use crate::environment::types::RunningEnvironment;
+use crate::environment::constants::RunningEnvironment;
 use dirs;
+
+pub fn as_boolean(value: String) -> bool {
+    value
+        .parse::<bool>()
+        .unwrap_or_else(|_| panic!("Failed to cast {} into a boolean!", &value))
+}
 
 pub fn get_running_environment() -> RunningEnvironment {
     if cfg!(debug_assertions) {
         return RunningEnvironment::Development;
     }
     RunningEnvironment::Production
-}
-
-pub fn get_env_var(key: &str) -> String {
-    std::env::var(key).unwrap_or_else(|_| panic!("Environment variable {} not set", key))
-}
-
-pub fn get_env_var_with_fallback(key: &str, fallback: &str) -> String {
-    let running_environment = get_running_environment();
-
-    if running_environment == RunningEnvironment::Development {
-        return std::env::var(key).unwrap_or_else(|_| fallback.to_string());
-    }
-
-    get_env_var(key)
 }
 
 pub fn get_database_path() -> String {
