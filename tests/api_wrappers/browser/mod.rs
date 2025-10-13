@@ -1,13 +1,14 @@
 use asmda::api_wrappers::APIWrapper;
 use asmda::api_wrappers::browser::{BrowserAPIWrapper, implementation_utils};
 use asmda::utils::constants::APIWrapperIdentificator;
-use asmda::{init_new_browser_api_wrapper, impl_browser_api_wrapper};
-use std::sync::{Arc, Mutex};
-use once_cell::sync::Lazy;
+use asmda::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
 use async_trait::async_trait;
 use fantoccini::Client;
+use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
 
-static MULTITHREADED_BUFFER: Lazy<Arc<Mutex<String>>> = Lazy::new(|| Arc::new(Mutex::new(String::from(""))));
+static MULTITHREADED_BUFFER: Lazy<Arc<Mutex<String>>> =
+    Lazy::new(|| Arc::new(Mutex::new(String::from(""))));
 
 init_new_browser_api_wrapper!(TestBrowserAPIWrapper);
 
@@ -31,8 +32,8 @@ mod tests {
     mod browser {
         use super::super::*;
         use asmda::utils::startup::install_crypto_ring_default_provider;
-        use tokio::time::sleep;
         use std::time::Duration;
+        use tokio::time::sleep;
 
         // Makes sure that the connections can run either in parallel or in a queue.
         #[tokio::test]
@@ -44,7 +45,9 @@ mod tests {
                 println!("first webdriver connected!");
 
                 let first_test_browser = TestBrowserAPIWrapper::new().await;
-                let returned_value = first_test_browser.visit_website(String::from("stale connected!")).await;
+                let returned_value = first_test_browser
+                    .visit_website(String::from("stale connected!"))
+                    .await;
                 let mut lock = MULTITHREADED_BUFFER.lock().unwrap();
                 *lock = returned_value;
             });
@@ -55,7 +58,9 @@ mod tests {
                 println!("second webdriver connected!");
 
                 let second_test_browser = TestBrowserAPIWrapper::new().await;
-                let returned_value = second_test_browser.visit_website(String::from("Connected!")).await;
+                let returned_value = second_test_browser
+                    .visit_website(String::from("Connected!"))
+                    .await;
                 let mut lock = MULTITHREADED_BUFFER.lock().unwrap();
                 *lock = returned_value;
             });
