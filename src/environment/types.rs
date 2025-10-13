@@ -27,6 +27,8 @@ pub struct SecretsEnvironment {
     // not. Anything accessed via this program's `environment::environment` method will already
     // be decrypted for you.
     pub are_encrypted: bool,
+    pub decryption_key: Option<String>,
+    pub decryption_key_passphrase: Option<String>,
 }
 
 #[derive(Debug)]

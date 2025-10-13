@@ -6,7 +6,8 @@ use constants::EnvironmentVariable::*;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment};
-use utils::{as_boolean, get_database_path, get_env_var, get_running_environment};
+use utils::generic::{as_boolean, get_running_environment, get_database_path};
+use utils::environment::get_env_var;
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
 
@@ -31,6 +32,8 @@ pub fn environment() -> &'static Environment {
             },
             secrets: SecretsEnvironment {
                 are_encrypted: as_boolean(get_env_var(SecretsAreEncrypted)),
+                decryption_key: get_env_var(SecretsDecryptionKey),
+                decryption_key_passphrase: get_env_var(SecretsDecryptionKeyPassphrase),
             },
         }
     })

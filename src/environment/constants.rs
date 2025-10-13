@@ -5,6 +5,7 @@ pub enum RunningEnvironment {
 }
 
 // All supported environment variables.
+#[derive(Clone)]
 pub enum EnvironmentVariable {
     LetterboxdPassword,
     LetterboxdUsername,
@@ -14,6 +15,8 @@ pub enum EnvironmentVariable {
     S3AccessKey,
     S3SecretKey,
     SecretsAreEncrypted,
+    SecretsDecryptionKey,
+    SecretsDecryptionKeyPassphrase,
 }
 
 impl EnvironmentVariable {
@@ -28,6 +31,8 @@ impl EnvironmentVariable {
             Self::S3AccessKey => "S3_ACCESS_KEY",
             Self::S3SecretKey => "S3_SECRET_KEY",
             Self::SecretsAreEncrypted => "SECRETS_ARE_ENCRYPTED",
+            Self::SecretsDecryptionKey => "SECRETS_DECRYPTION_KEY",
+            Self::SecretsDecryptionKeyPassphrase => "SECRETS_DECRYPTION_KEY_PASSPHRASE",
         };
         str.to_string()
     }
@@ -43,10 +48,12 @@ impl EnvironmentVariable {
             Self::S3AccessKey => false,
             Self::S3SecretKey => true,
             Self::SecretsAreEncrypted => false,
+            Self::SecretsDecryptionKey => false,
+            Self::SecretsDecryptionKeyPassphrase => false,
         }
     }
 
-    pub fn get_fallback_value(&self) -> Option<String> {
+    pub fn get_development_fallback_value(&self) -> Option<String> {
         let value = match self {
             Self::LetterboxdPassword => None,
             Self::LetterboxdUsername => None,
@@ -56,7 +63,21 @@ impl EnvironmentVariable {
             Self::S3AccessKey => Some("developmentuser"),
             Self::S3SecretKey => Some("developmentpassword"),
             Self::SecretsAreEncrypted => Some("false"),
+            Self::SecretsDecryptionKey => None,
+            Self::SecretsDecryptionKeyPassphrase => None,
         };
         value.map(|value| value.to_string())
+    }
+
+    // In production all environment variables are required to be explicitly defined.
+    pub fn is_required(&self) -> bool {
+        if self.get_development_fallback_value().is_some() {
+            return false;
+        }
+
+        match self {
+            Self::SecretsDecryptionKey | Self::SecretsDecryptionKeyPassphrase => false,
+            _ => true,
+        }
     }
 }
