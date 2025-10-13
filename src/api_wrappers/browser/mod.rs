@@ -5,12 +5,12 @@ use fantoccini::Client;
 pub mod letterboxd;
 
 #[async_trait]
-pub(super) trait BrowserAPIWrapper: APIWrapper {
+pub trait BrowserAPIWrapper: APIWrapper {
     fn from_client(client: Client) -> Self;
     async fn new() -> Self;
 }
 
-mod implementation_utils {
+pub mod implementation_utils {
     use crate::api_wrappers::browser::BrowserAPIWrapper;
     use fantoccini::{Client, ClientBuilder};
 
