@@ -6,8 +6,8 @@ use constants::EnvironmentVariable::*;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment};
-use utils::generic::{as_boolean, get_running_environment, get_database_path};
 use utils::environment::get_env_var;
+use utils::generic::{as_boolean, get_database_path, get_running_environment};
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
 

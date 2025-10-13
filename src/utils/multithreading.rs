@@ -6,7 +6,5 @@ pub fn block_on<F, T>(future: F) -> T
 where
     F: Future<Output = T>,
 {
-    task::block_in_place(|| {
-        runtime::Handle::current().block_on(future)
-    })
+    task::block_in_place(|| runtime::Handle::current().block_on(future))
 }

@@ -40,7 +40,8 @@ mod tests {
 
         #[tokio::test]
         async fn decrypts_correctly() {
-            let test_private_key = String::from("
+            let test_private_key = String::from(
+                "
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 
 lQWGBGjkDI0BDADCX904D1L/YKRUepGuEc6kHPkwm7k38lhCnOpu+ORg9I/Hy9dS
@@ -125,9 +126,11 @@ fTY2YK8jnXzLARxw4x0O7vZHh8Sjs2cQR8VsmbOYkdWWujy/U/Chk9LToyUN71S6
 3gg1AEJ2wrRofcWnQjklYCmoPCRNQFiWi2cANUZFXz0Td/nF2n0=
 =tZdn
 -----END PGP PRIVATE KEY BLOCK-----
-");
+",
+            );
             let test_private_key_password = String::from("test_private_key_password");
-            let test_encrypted_message = String::from("
+            let test_encrypted_message = String::from(
+                "
 -----BEGIN PGP MESSAGE-----
 
 hQGMA2hxj2cLZDw1AQwApJBGwIWkF39EyBbNcVFkgeWsm2LSd0ZnvMHlzdDuGfSk
@@ -142,7 +145,8 @@ zN97LZpXsLzANKqXEcWA0kwBJNlrBe68fDPvq23AIRRTdK+USzItQb0b+gX5YhfJ
 xvqCU/aKn1UoOkqcfJ820sbW+/2MPMYhC9WcaTiwdX9efVJWqlUXyfSqXJPQ
 =caX1
 -----END PGP MESSAGE-----
-");
+",
+            );
             let test_raw_message = String::from("Komm, susser Tod");
 
             let decryptor = Decryptor::new(test_private_key, test_private_key_password).await;
