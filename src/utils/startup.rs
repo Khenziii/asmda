@@ -10,11 +10,14 @@ pub fn show_environment_if_in_dev_env() {
     logger::debug(&config_stringified);
 }
 
-pub fn startup() {
+pub fn install_crypto_ring_default_provider() {
     rustls::crypto::ring::default_provider()
         .install_default()
         .expect("Failed to install rustls crypto provider!");
+}
 
+pub fn startup() {
+    install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
 }
 

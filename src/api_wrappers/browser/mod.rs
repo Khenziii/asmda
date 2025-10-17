@@ -1,29 +1,50 @@
 use crate::api_wrappers::APIWrapper;
+use crate::logger;
 use async_trait::async_trait;
 use fantoccini::Client;
+use fantoccini::ClientBuilder;
+use std::time::Duration;
+use tokio::time::sleep;
 
 pub mod letterboxd;
 
 #[async_trait]
-pub(super) trait BrowserAPIWrapper: APIWrapper {
+pub trait BrowserAPIWrapper: APIWrapper {
     fn from_client(client: Client) -> Self;
     async fn new() -> Self;
 }
 
-mod implementation_utils {
+async fn get_client() -> Client {
+    loop {
+        let client = ClientBuilder::rustls()
+            .expect("Failed to use rustls to build a browser client!")
+            .connect("http://localhost:4444")
+            .await;
+
+        match client {
+            Ok(c) => return c,
+            Err(_) => {
+                logger::error(
+                    "Failed to establish a connection to WebDriver (:4444)! Make sure that it's running. If it already is, this error has probably appeared because another client is already connected.",
+                );
+                logger::error("Retrying in 5 seconds...");
+
+                sleep(Duration::from_secs(5)).await;
+            }
+        }
+    }
+}
+
+pub mod implementation_utils {
+    use super::get_client;
     use crate::api_wrappers::browser::BrowserAPIWrapper;
-    use fantoccini::{Client, ClientBuilder};
+    use fantoccini::Client;
 
     pub async fn default_constructor<T>(from_client: fn(Client) -> T) -> T
     where
         T: BrowserAPIWrapper,
     {
-        let client = ClientBuilder::rustls()
-            .expect("Failed to use rustls to build a browser client!")
-            .connect("http://localhost:4444")
-            .await
-            .expect("Failed to connect to WebDriver on port 4444! Is it surely running?");
-
+        let client = get_client().await;
         from_client(client)
     }
 }
