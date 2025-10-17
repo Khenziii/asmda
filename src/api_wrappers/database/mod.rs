@@ -1,6 +1,6 @@
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
-use crate::logger;
+use crate::logger::logger;
 use crate::utils::constants::{APIWrapperIdentificator, ArchiverIdentificator};
 use crate::utils::time::{str_to_system_time, system_time_to_str};
 use rusqlite::{Connection, Error::QueryReturnedNoRows};
@@ -70,7 +70,7 @@ impl DatabaseClient {
             )
             .expect("Failed to update next_run!");
 
-        logger::debug(&format!(
+        logger().debug(&format!(
             "updated the {}'s next_run to {}",
             app_name.as_str(),
             new_next_run_string

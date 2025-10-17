@@ -1,6 +1,6 @@
 pub mod tasks;
 
-use crate::logger;
+use crate::logger::logger;
 use std::mem::take;
 use tasks::{Task, get_all_tasks};
 
@@ -27,7 +27,7 @@ impl Scheduler {
                     let time_until_next_run = task.get_time_until_next_run();
                     let app_name = task.get_app_name();
 
-                    logger::debug(&format!(
+                    logger().debug(&format!(
                         "next archive of {} app in {} seconds",
                         app_name.as_str(),
                         time_until_next_run.as_secs()

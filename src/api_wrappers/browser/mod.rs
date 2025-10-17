@@ -1,5 +1,5 @@
 use crate::api_wrappers::APIWrapper;
-use crate::logger;
+use crate::logger::logger;
 use async_trait::async_trait;
 use fantoccini::Client;
 use fantoccini::ClientBuilder;
@@ -24,10 +24,10 @@ async fn get_client() -> Client {
         match client {
             Ok(c) => return c,
             Err(_) => {
-                logger::error(
+                logger().error(
                     "Failed to establish a connection to WebDriver (:4444)! Make sure that it's running. If it already is, this error has probably appeared because another client is already connected.",
                 );
-                logger::error("Retrying in 5 seconds...");
+                logger().error("Retrying in 5 seconds...");
 
                 sleep(Duration::from_secs(5)).await;
             }

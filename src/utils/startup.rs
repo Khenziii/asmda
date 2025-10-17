@@ -1,13 +1,13 @@
 use crate::environment;
-use crate::logger;
+use crate::logger::logger;
 use rustls;
 
 pub fn show_environment_if_in_dev_env() {
     let config = environment::environment();
     let config_stringified = format!("{:#?}", config);
 
-    logger::debug("Current environment:");
-    logger::debug(&config_stringified);
+    logger().debug("Current environment:");
+    logger().debug(&config_stringified);
 }
 
 pub fn install_crypto_ring_default_provider() {
