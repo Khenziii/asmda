@@ -1,13 +1,31 @@
-use crate::utils::{terminal::clear_previous_lines, tests::is_test_environment};
+use crate::utils::terminal::clear_previous_lines;
 use once_cell::sync::OnceCell;
 use std::sync::{Arc, Mutex, MutexGuard};
+use crossterm::terminal::size;
 
-// Removes strings with new line characters into multiple ones.
-fn format_new_rows(new_rows: Vec<String>) -> Vec<String> {
+// TODO: wrap too long logs, instead of trimming them.
+
+// Splits strings with newline characters into new lines, and trims them if they're too long.
+fn format_new_rows(rows: Vec<String>) -> Vec<String> {
     let mut formatted_rows = Vec::new();
+    let max_log_length: usize = match size() {
+        // We're multiplying this 2 times as crossterm seems to underestimate how large terminals
+        // really are ;-;. I'll implement some text wrapping later and ditch this anyway.
+        Ok((_, rows)) => (rows as f32 * 2.0) as usize,
+        Err(_) => 100,
+    };
 
-    for row in new_rows {
-        let mut formatted_strings: Vec<String> = row.lines().map(|line| line.to_string()).collect();
+    for row in rows {
+        let mut formatted_strings: Vec<String> = row.lines()
+            .map(|line| {
+                let formatted_line: String = line.chars().take(max_log_length).collect();
+                if formatted_line.len() == max_log_length {
+                    format!("{}...", formatted_line)
+                } else {
+                    formatted_line
+                }
+            })
+            .collect();
         formatted_rows.append(&mut formatted_strings);
     }
 
@@ -44,11 +62,9 @@ impl TerminalUserInterface {
         let new_height = self.get_height();
         let height_difference = new_height - previous_height;
 
-        for _ in 1..height_difference {
+        for _ in 0..height_difference {
             print!("\n");
         }
-
-        println!("removing {} lines...", new_height);
 
         clear_previous_lines(new_height, None);
         self.print();
@@ -66,14 +82,6 @@ impl TerminalUserInterface {
         }
 
         self.rerender(current_tui_height);
-
-        // if is_test_environment() {
-        //     // In test env, don't override previous lines by rerendering, just write new ones.
-        //     // Rust's CLI kind of wraps them, and everything breaks when we manipulate standard
-        //     // output like that in this case.
-        // } else {
-        //     self.rerender(current_tui_height);
-        // }
     }
 
     pub fn add_row(&mut self, new_row: String) {
@@ -100,9 +108,6 @@ pub fn tui() -> MutexGuard<'static, TerminalUserInterface> {
 mod tests {
     mod tui {
         use crate::logger::logger;
-        use crate::environment::environment;
-        use std::time::Duration;
-        use tokio::time::sleep;
 
         #[test]
         fn formats_new_lines_properly() {
@@ -113,28 +118,6 @@ mod tests {
             let output = logger().get_history_buffer_as_string();
 
             assert_eq!(output, "first\n\n\nsecond\nthird\nfourth")
-        }
-
-        #[tokio::test]
-        async fn rerenders_correctly() {
-            logger().log("1");
-            sleep(Duration::from_secs(1)).await;
-            logger().log("2");
-            sleep(Duration::from_secs(1)).await;
-            logger().log("3");
-            sleep(Duration::from_secs(1)).await;
-            logger().log("multiline\n\n");
-            sleep(Duration::from_secs(1)).await;
-            logger().log("I should appear after 2 newlines\n");
-            sleep(Duration::from_secs(1)).await;
-            logger().log("And I after another one!");
-            sleep(Duration::from_secs(1)).await;
-
-            let config = environment();
-            let config_stringified = format!("{:#?}", config);
-
-            logger().debug("Current environment:");
-            logger().debug(&config_stringified);
         }
     }
 }

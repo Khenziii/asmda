@@ -35,7 +35,7 @@ impl Logger {
     }
 
     pub fn log(&mut self, log: &str) {
-        let str = format!("{}", &log);
+        let str = format!("{}", &log.white());
         self.write(str);
     }
 
