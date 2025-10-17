@@ -70,6 +70,8 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
     T::from_result(value, variable)
 }
 
-pub fn get_env_var<T: EnvironmentVariableGetterResultParser + Send + 'static>(variable: EnvironmentVariable) -> T {
+pub fn get_env_var<T: EnvironmentVariableGetterResultParser + Send + 'static>(
+    variable: EnvironmentVariable,
+) -> T {
     multithreading::block_on(get_env_var_async(variable))
 }

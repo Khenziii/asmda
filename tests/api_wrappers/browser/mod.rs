@@ -31,8 +31,8 @@ impl TestBrowserAPIWrapper {
 mod tests {
     mod browser {
         use super::super::*;
-        use asmda::utils::startup::install_crypto_ring_default_provider;
         use asmda::logger::logger;
+        use asmda::utils::startup::install_crypto_ring_default_provider;
         use std::time::Duration;
         use tokio::time::sleep;
 

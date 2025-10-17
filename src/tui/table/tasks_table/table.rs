@@ -1,5 +1,5 @@
-use crate::tui::table::{Table, TableItem};
 use crate::tui::table::tasks_table::item::TasksTableItem;
+use crate::tui::table::{Table, TableItem};
 use crate::tui::utils::format_new_rows;
 use comfy_table::Table as ComfyTable;
 use std::collections::HashMap;
@@ -47,7 +47,10 @@ impl Table<TasksTableItem> for TasksTable {
 impl TasksTable {
     pub fn new() -> Self {
         let table = ComfyTable::new();
-        let mut new_instance = Self { items: HashMap::new(), table: table };
+        let mut new_instance = Self {
+            items: HashMap::new(),
+            table: table,
+        };
         new_instance.setup();
         new_instance
     }
@@ -57,7 +60,7 @@ impl TasksTable {
 mod tests {
     mod tasks_table {
         use super::super::*;
-        
+
         #[test]
         fn calculates_height_correctly() {
             let mut table = TasksTable::new();
@@ -66,7 +69,7 @@ mod tests {
                 TasksTableItem {
                     name: "Task name".to_string(),
                     next_run: "Next run".to_string(),
-                }
+                },
             );
 
             assert_eq!(table.get_height(), 5);

@@ -3,13 +3,13 @@ pub mod archivers;
 pub mod environment;
 pub mod logger;
 pub mod schedule;
-pub mod utils;
 pub mod tui;
+pub mod utils;
 
+use logger::logger;
 use schedule::Scheduler;
 use std::thread;
 use utils::startup::startup;
-use logger::logger;
 
 pub async fn run() {
     logger().log("Starting up...");

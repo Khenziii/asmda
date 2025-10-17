@@ -12,8 +12,6 @@ where
             .join()
             .expect("Thread has panicked!")
     } else {
-        tokio::runtime::Runtime::new()
-            .unwrap()
-            .block_on(future)
+        tokio::runtime::Runtime::new().unwrap().block_on(future)
     }
 }

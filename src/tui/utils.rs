@@ -13,7 +13,8 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
     };
 
     for row in rows {
-        let mut formatted_strings: Vec<String> = row.lines()
+        let mut formatted_strings: Vec<String> = row
+            .lines()
             .map(|line| {
                 let formatted_line: String = line.chars().take(max_log_length).collect();
                 if formatted_line.len() == max_log_length {

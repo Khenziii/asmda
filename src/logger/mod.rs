@@ -15,11 +15,11 @@ impl Logger {
             history_buffer: Cursor::new(Vec::new()),
         }
     }
-    
+
     fn write(&mut self, log: String) {
         writeln!(self.history_buffer, "{}", log)
             .expect("Failed to write to history buffer! Logger's history won't be accessible.");
-        
+
         let mut interface = tui::tui();
         interface.add_row(log);
     }

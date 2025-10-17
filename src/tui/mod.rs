@@ -1,12 +1,12 @@
 pub mod table;
-pub mod utils;
 pub mod types;
+pub mod utils;
 
 use crate::utils::terminal::clear_previous_lines;
-use utils::format_new_rows;
-use types::NewRowCallback;
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
+use types::NewRowCallback;
+use utils::format_new_rows;
 
 #[derive(Clone)]
 pub struct TerminalUserInterface {
