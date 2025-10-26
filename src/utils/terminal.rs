@@ -40,12 +40,18 @@ pub fn clear_previous_lines(amount: usize, stdout_arg: Option<Stdout>) {
     }
 }
 
-pub fn add_table_to_tui<T, U>(table: U, tui: &mut TerminalUserInterface)
+pub fn add_table_to_tui<T, U>(table: U, tui: &mut TerminalUserInterface, print: bool)
 where
     U: Table<T>,
 {
     let rows = table.as_string_array();
-    tui.add_rows(rows, false, false);
+    tui.add_rows(rows.clone(), false, false);
+
+    if print {
+        for row in rows {
+            println!("{}", row);
+        }
+    }
 }
 
 pub fn setup_tui() {
@@ -61,7 +67,7 @@ pub fn setup_tui() {
         },
     );
 
-    add_table_to_tui(table.clone(), &mut tui);
+    add_table_to_tui(table.clone(), &mut tui, true);
 
     // Reorders rows after adding them.
     // Assume that we have a TUI with logs at the top and a table at the end (one which should stay
@@ -76,7 +82,7 @@ pub fn setup_tui() {
         tui.remove_last_rows(table_height);
 
         tui.add_rows(new_rows, false, false);
-        add_table_to_tui(table.clone(), tui);
+        add_table_to_tui(table.clone(), tui, false);
     };
     let wrapped_new_row_callback = Arc::new(new_row_callback);
 
