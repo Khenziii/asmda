@@ -16,12 +16,16 @@ impl Logger {
         }
     }
 
-    fn write(&mut self, log: String) {
+    fn add_log_to_history_buffer(&mut self, log: String) {
         writeln!(self.history_buffer, "{}", log)
             .expect("Failed to write to history buffer! Logger's history won't be accessible.");
+    }
+
+    fn write(&mut self, log: String) {
+        self.add_log_to_history_buffer(log.clone());
 
         let mut interface = tui::tui();
-        interface.add_row(log);
+        interface.add_row(log, true, true);
     }
 
     pub fn debug(&mut self, log: &str) {

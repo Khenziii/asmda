@@ -9,9 +9,10 @@ pub mod utils;
 use logger::logger;
 use schedule::Scheduler;
 use std::thread;
-use utils::startup::startup;
+use utils::{terminal::setup_tui, startup::startup};
 
 pub async fn run() {
+    setup_tui();
     logger().log("Starting up...");
     startup();
 

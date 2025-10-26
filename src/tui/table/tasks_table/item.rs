@@ -1,5 +1,6 @@
 use crate::tui::table::TableItem;
 
+#[derive(Clone)]
 pub struct TasksTableItem {
     pub name: String,
     pub next_run: String,

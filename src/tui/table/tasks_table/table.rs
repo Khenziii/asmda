@@ -4,6 +4,7 @@ use crate::tui::utils::format_new_rows;
 use comfy_table::Table as ComfyTable;
 use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct TasksTable {
     items: HashMap<String, TasksTableItem>,
     table: ComfyTable,
