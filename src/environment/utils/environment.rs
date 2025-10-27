@@ -21,10 +21,7 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        match value {
-            Some(v) => Some(v.replace("\\n", "\n")),
-            None => None,
-        }
+        value.map(|v| v.replace("\\n", "\n"))
     }
 }
 

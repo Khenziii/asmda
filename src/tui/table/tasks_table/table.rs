@@ -45,12 +45,18 @@ impl Table<TasksTableItem> for TasksTable {
     }
 }
 
+impl Default for TasksTable {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TasksTable {
     pub fn new() -> Self {
         let table = ComfyTable::new();
         let mut new_instance = Self {
             items: HashMap::new(),
-            table: table,
+            table,
         };
         new_instance.setup();
         new_instance

@@ -9,8 +9,7 @@ use strip_ansi_escapes;
 // Removes ANSI codes added by `colored` crate used in our logger.
 pub fn strip_color_from_string(string: String) -> String {
     let stripped = strip_ansi_escapes::strip(string);
-    let stripped_string = String::from_utf8(stripped).unwrap();
-    stripped_string
+    String::from_utf8(stripped).unwrap()
 }
 
 pub fn strip_color_from_strings(strings: Vec<String>) -> Vec<String> {

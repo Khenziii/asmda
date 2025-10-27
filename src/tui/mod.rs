@@ -14,6 +14,12 @@ pub struct TerminalUserInterface {
     new_rows_callbacks: Vec<NewRowCallback>,
 }
 
+impl Default for TerminalUserInterface {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TerminalUserInterface {
     pub fn new() -> Self {
         TerminalUserInterface {
@@ -33,7 +39,7 @@ impl TerminalUserInterface {
         let height_difference = new_height - previous_height;
 
         for _ in 0..height_difference {
-            print!("\n");
+            println!();
         }
 
         clear_previous_lines(new_height, None);

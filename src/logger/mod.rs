@@ -9,6 +9,12 @@ pub struct Logger {
     history_buffer: Cursor<Vec<u8>>,
 }
 
+impl Default for Logger {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Logger {
     pub fn new() -> Self {
         Logger {
