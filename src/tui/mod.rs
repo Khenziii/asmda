@@ -57,7 +57,9 @@ impl TerminalUserInterface {
             }
         }
 
-        if render { self.rerender(current_tui_height); }
+        if render {
+            self.rerender(current_tui_height);
+        }
     }
 
     pub fn add_row(&mut self, new_row: String, trigger_callbacks: bool, render: bool) {

@@ -13,9 +13,7 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
 
     let mut splitted_rows = Vec::new();
     for row in rows {
-        splitted_rows.extend(
-            row.split('\n').map(|s| s.to_string())
-        );
+        splitted_rows.extend(row.split('\n').map(|s| s.to_string()));
     }
 
     let mut formatted_rows = Vec::new();
@@ -28,7 +26,7 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
         } else {
             formatted_row = taken_chars;
         }
-        
+
         formatted_rows.push(formatted_row);
     }
 
@@ -42,23 +40,28 @@ mod tests {
 
         #[test]
         fn new_rows_format() {
-            let new_row = String::from("Environment {
+            let new_row = String::from(
+                "Environment {
     metadata: Metadata {
         running_environment: Development,
         database_path: 'asmda.sqlite',
     },
-},");
+},",
+            );
             let new_rows = vec![new_row];
 
             let formatted_new_rows = format_new_rows(new_rows);
-            assert_eq!(formatted_new_rows, [
-                "Environment {",
-                "    metadata: Metadata {",
-                "        running_environment: Development,",
-                "        database_path: 'asmda.sqlite',",
-                "    },",
-                "},",
-            ]);
+            assert_eq!(
+                formatted_new_rows,
+                [
+                    "Environment {",
+                    "    metadata: Metadata {",
+                    "        running_environment: Development,",
+                    "        database_path: 'asmda.sqlite',",
+                    "    },",
+                    "},",
+                ]
+            );
         }
     }
 }

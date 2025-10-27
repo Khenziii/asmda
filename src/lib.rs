@@ -9,7 +9,7 @@ pub mod utils;
 use logger::logger;
 use schedule::Scheduler;
 use std::thread;
-use utils::{terminal::setup_tui, startup::startup};
+use utils::{startup::startup, terminal::setup_tui};
 
 pub async fn run() {
     setup_tui();

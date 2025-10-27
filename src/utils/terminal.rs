@@ -1,14 +1,10 @@
 use crate::tui;
-use crate::tui::{TerminalUserInterface};
-use crate::tui::table::{
-    Table,
-    tasks_table::table::TasksTable,
-    tasks_table::item::TasksTableItem,
-};
+use crate::tui::TerminalUserInterface;
+use crate::tui::table::{Table, tasks_table::item::TasksTableItem, tasks_table::table::TasksTable};
 use crossterm::{ExecutableCommand, cursor, terminal};
-use strip_ansi_escapes;
 use std::io::{Stdout, stdout};
 use std::sync::Arc;
+use strip_ansi_escapes;
 
 // Removes ANSI codes added by `colored` crate used in our logger.
 pub fn strip_color_from_string(string: String) -> String {
@@ -30,7 +26,7 @@ pub fn clear_previous_lines(amount: usize, stdout_arg: Option<Stdout>) {
         Some(s) => s,
     };
 
-   for _ in 0..amount {
+    for _ in 0..amount {
         output_stream
             .execute(cursor::MoveUp(1))
             .expect("Failed to move to the previous line of standard output!");
@@ -116,14 +112,17 @@ mod tests {
             logger().log("Starting up...");
 
             let output = strip_color_from_strings(tui().get_rows());
-            assert_eq!(output, [
-                "Starting up...",
-                "+------+-----------+----------+",
-                "| ID   | Name      | Next run |",
-                "+=============================+",
-                "| Test | Task name | Next run |",
-                "+------+-----------+----------+",
-            ]);
+            assert_eq!(
+                output,
+                [
+                    "Starting up...",
+                    "+------+-----------+----------+",
+                    "| ID   | Name      | Next run |",
+                    "+=============================+",
+                    "| Test | Task name | Next run |",
+                    "+------+-----------+----------+",
+                ]
+            );
         }
     }
 }

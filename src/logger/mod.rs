@@ -87,7 +87,6 @@ mod tests {
             logger().reinitialize();
             logger().log("hey!");
 
-            
             let output = strip_color_from_string(logger().get_history_buffer_as_string());
             assert_eq!(output, "hey!");
         }
