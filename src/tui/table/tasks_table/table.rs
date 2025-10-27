@@ -1,7 +1,9 @@
 use crate::tui::table::tasks_table::item::TasksTableItem;
 use crate::tui::table::{Table, TableItem};
-use crate::tui::utils::format_new_rows;
+use crate::tui::utils::{format_new_rows, get_centered_cell_from_string};
 use comfy_table::Table as ComfyTable;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::modifiers::{UTF8_SOLID_INNER_BORDERS, UTF8_ROUND_CORNERS};
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -25,7 +27,14 @@ impl Table<TasksTableItem> for TasksTable {
     fn setup(&mut self) {
         let table = ComfyTable::new();
         self.table = table;
-        self.table.set_header(["ID", "Name", "Next run"]);
+        self.table.set_header(vec![
+            get_centered_cell_from_string("ID"),
+            get_centered_cell_from_string("Name"),
+            get_centered_cell_from_string("Next run"),
+        ]);
+        self.table.load_preset(UTF8_FULL);
+        self.table.apply_modifier(UTF8_ROUND_CORNERS);
+        self.table.apply_modifier(UTF8_SOLID_INNER_BORDERS);
     }
 
     fn add_item(&mut self, name: String, item: TasksTableItem) {

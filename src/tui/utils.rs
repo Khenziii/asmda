@@ -1,4 +1,5 @@
 use crossterm::terminal::size;
+use comfy_table::{Cell, CellAlignment};
 
 // TODO: wrap too long logs, instead of trimming them.
 
@@ -31,6 +32,10 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
     }
 
     formatted_rows
+}
+
+pub fn get_centered_cell_from_string(string: &str) -> Cell {
+    Cell::new(string).set_alignment(CellAlignment::Center)
 }
 
 #[cfg(test)]
