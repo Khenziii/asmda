@@ -110,6 +110,8 @@ mod tests {
 
         #[test]
         fn default_tui_setup_works() {
+            logger().reinitialize();
+            tui().reinitialize();
             setup_tui();
             logger().log("Starting up...");
 

@@ -59,6 +59,10 @@ impl Logger {
             .trim_end()
             .to_string()
     }
+
+    pub fn reinitialize(&mut self) {
+        *self = Logger::new();
+    }
 }
 
 static LOGGER: OnceCell<Mutex<Logger>> = OnceCell::new();
@@ -69,4 +73,23 @@ fn get_logger() -> &'static Mutex<Logger> {
 
 pub fn logger() -> MutexGuard<'static, Logger> {
     get_logger().lock().unwrap()
+}
+
+#[cfg(test)]
+mod tests {
+    mod logger {
+        use super::super::*;
+        use crate::utils::terminal::strip_color_from_string;
+
+        #[test]
+        fn reinitialization_works() {
+            logger().log("hi!");
+            logger().reinitialize();
+            logger().log("hey!");
+
+            
+            let output = strip_color_from_string(logger().get_history_buffer_as_string());
+            assert_eq!(output, "hey!");
+        }
+    }
 }

@@ -87,6 +87,10 @@ impl TerminalUserInterface {
     pub fn get_rows(&self) -> Vec<String> {
         self.rows.clone()
     }
+
+    pub fn reinitialize(&mut self) {
+        *self = TerminalUserInterface::new();
+    }
 }
 
 static TUI: OnceCell<Mutex<TerminalUserInterface>> = OnceCell::new();
@@ -103,14 +107,16 @@ pub fn tui() -> MutexGuard<'static, TerminalUserInterface> {
 mod tests {
     mod tui {
         use crate::logger::logger;
+        use crate::utils::terminal::strip_color_from_string;
 
         #[test]
         fn formats_new_lines_properly() {
+            logger().reinitialize();
             logger().log("first\n\n\nsecond");
             logger().log("third");
             logger().log("fourth");
 
-            let output = logger().get_history_buffer_as_string();
+            let output = strip_color_from_string(logger().get_history_buffer_as_string());
             assert_eq!(output, "first\n\n\nsecond\nthird\nfourth")
         }
     }
