@@ -34,15 +34,19 @@ impl TerminalUserInterface {
         }
     }
 
-    fn rerender(&self, previous_height: usize) {
-        let new_height = self.get_height();
-        let height_difference = new_height - previous_height;
+    // If the total height of the TUI has changed, you'll need to pass `previous_height` in order
+    // to keep everything synchronised. If it's the same, passing just `None` is completely fine.
+    pub fn rerender(&self, previous_height: Option<usize>) {
+        let current_height = self.get_height();
+        if previous_height.is_some() {
+            let height_difference = current_height - previous_height.unwrap();
 
-        for _ in 0..height_difference {
-            println!();
+            for _ in 0..height_difference {
+                println!();
+            }
         }
 
-        clear_previous_lines(new_height, None);
+        clear_previous_lines(current_height, None);
         self.print();
     }
 
@@ -64,7 +68,7 @@ impl TerminalUserInterface {
         }
 
         if render {
-            self.rerender(current_tui_height);
+            self.rerender(Some(current_tui_height));
         }
     }
 

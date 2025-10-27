@@ -24,7 +24,7 @@ impl Table<TasksTableItem> for TasksTable {
     }
 
     // Resets the table to the base state.
-    fn setup(&mut self) {
+    fn reinitialize(&mut self) {
         let table = ComfyTable::new();
         self.table = table;
         self.table.set_header(vec![
@@ -43,7 +43,7 @@ impl Table<TasksTableItem> for TasksTable {
     }
 
     fn rerender(&mut self) {
-        self.setup();
+        self.reinitialize();
 
         for (name, item) in &self.items {
             let mut row: Vec<String> = Vec::new();
@@ -67,7 +67,7 @@ impl TasksTable {
             items: HashMap::new(),
             table,
         };
-        new_instance.setup();
+        new_instance.reinitialize();
         new_instance
     }
 }

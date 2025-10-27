@@ -1,9 +1,10 @@
 use crate::tui;
 use crate::tui::TerminalUserInterface;
-use crate::tui::table::{Table, tasks_table::item::TasksTableItem, tasks_table::table::TasksTable};
+use crate::tui::table::utils::setup_tasks_table_in_tui;
+use crate::tui::table::{Table, tasks_table::table::TasksTable};
 use crossterm::{ExecutableCommand, cursor, terminal};
 use std::io::{Stdout, stdout};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use strip_ansi_escapes;
 
 // Removes ANSI codes added by `colored` crate used in our logger.
@@ -43,41 +44,45 @@ where
     tui.add_rows(rows.clone(), false, false);
 
     if print {
-        for row in rows {
-            println!("{}", row);
-        }
+        tui.rerender(None);
     }
 }
 
+pub fn refresh_table_in_tui<T, U>(table: U, tui: &mut TerminalUserInterface)
+where
+    U: Table<T>,
+{
+    // We can simply do this, as there's always a single table at the bottom of the TUI that has
+    // always the exact same height since the program's start, all the way to the end.
+    let previous_height = table.get_height();
+    tui.remove_last_rows(previous_height);
+
+    add_table_to_tui(table, tui, true);
+}
+
 pub fn setup_tui() {
-    let mut table = TasksTable::new();
+    let table = Arc::new(Mutex::new(TasksTable::new()));
+
+    setup_tasks_table_in_tui(Arc::clone(&table));
     let mut tui = tui::tui();
-
-    // TODO: add actual table rows here...
-    table.add_item(
-        "Test".to_string(),
-        TasksTableItem {
-            name: "Task name".to_string(),
-            next_run: "Next run".to_string(),
-        },
-    );
-
-    add_table_to_tui(table.clone(), &mut tui, true);
 
     // Reorders rows after adding them.
     // Assume that we have a TUI with logs at the top and a table at the end (one which should stay
     // there permanently). After we write another row, we'll have: rows --> table --> row. This
     // callback reorders the new row to be placed between old rows and the table, so:
     // rows --> row --> table.
+    let callback_table_pointer = Arc::clone(&table);
     let new_row_callback = move |tui: &mut TerminalUserInterface, new_rows: Vec<String>| {
+        let callback_table = callback_table_pointer.lock().unwrap();
+
         let amount_of_rows_added = new_rows.len();
-        let table_height = table.get_height();
+        let table_height = callback_table.get_height();
 
         tui.remove_last_rows(amount_of_rows_added);
         tui.remove_last_rows(table_height);
 
         tui.add_rows(new_rows, false, false);
-        add_table_to_tui(table.clone(), tui, false);
+        add_table_to_tui(callback_table.clone(), tui, false);
     };
     let wrapped_new_row_callback = Arc::new(new_row_callback);
 
@@ -115,11 +120,11 @@ mod tests {
                 output,
                 [
                     "Starting up...",
-                    "+------+-----------+----------+",
-                    "| ID   | Name      | Next run |",
-                    "+=============================+",
-                    "| Test | Task name | Next run |",
-                    "+------+-----------+----------+",
+                    "╭──────┬───────────┬──────────╮",
+                    "│  ID  │    Name   │ Next run │",
+                    "╞══════╪═══════════╪══════════╡",
+                    "│ Test │ Task name │ Next run │",
+                    "╰──────┴───────────┴──────────╯",
                 ]
             );
         }
