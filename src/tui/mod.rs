@@ -120,8 +120,10 @@ mod tests {
     mod tui {
         use crate::logger::logger;
         use crate::utils::terminal::strip_color_from_string;
+        use serial_test::serial;
 
         #[test]
+        #[serial]
         fn formats_new_lines_properly() {
             logger().reinitialize();
             logger().log("first\n\n\nsecond");

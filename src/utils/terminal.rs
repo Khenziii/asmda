@@ -96,8 +96,10 @@ mod tests {
         use crate::logger;
         use crate::tui::tui;
         use colored::Colorize;
+        use serial_test::serial;
 
         #[test]
+        #[serial]
         fn stripping_colors_from_strings() {
             let log = "hello!".red().to_string();
             let raw_log = strip_color_from_string(log);
@@ -109,6 +111,7 @@ mod tests {
         }
 
         #[test]
+        #[serial]
         fn default_tui_setup_works() {
             logger().reinitialize();
             tui().reinitialize();
@@ -120,11 +123,11 @@ mod tests {
                 output,
                 [
                     "Starting up...",
-                    "╭──────┬───────────┬──────────╮",
-                    "│  ID  │    Name   │ Next run │",
-                    "╞══════╪═══════════╪══════════╡",
-                    "│ Test │ Task name │ Next run │",
-                    "╰──────┴───────────┴──────────╯",
+                    "╭────┬────────────┬──────────╮",
+                    "│ ID │    Name    │ Next run │",
+                    "╞════╪════════════╪══════════╡",
+                    "│  1 │ letterboxd │    0s    │",
+                    "╰────┴────────────┴──────────╯",
                 ]
             );
         }

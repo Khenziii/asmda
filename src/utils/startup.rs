@@ -25,11 +25,13 @@ pub fn startup() {
 mod tests {
     mod startup {
         use super::super::*;
+        use serial_test::serial;
 
         // This could fail as `install_default` is executed during runtime, so the compiler isn't
         // able to catch all the issues possibly arising from it. If for example some of our
         // dependencies were misconfigured, this test would come in handy.
         #[test]
+        #[serial]
         fn runs() {
             startup();
         }
