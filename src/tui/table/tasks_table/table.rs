@@ -49,7 +49,8 @@ impl Table<TasksTableItem> for TasksTable {
             let mut row: Vec<String> = Vec::new();
             row.push(name.to_string());
             row.append(&mut item.get_value_as_string_array());
-            self.table.add_row(row);
+            let stylized_row = row.iter().map(|string| get_centered_cell_from_string(string));
+            self.table.add_row(stylized_row);
         }
     }
 }
