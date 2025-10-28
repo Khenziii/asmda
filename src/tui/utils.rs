@@ -1,5 +1,5 @@
-use crossterm::terminal::size;
 use comfy_table::{Cell, CellAlignment};
+use crossterm::terminal::size;
 
 // TODO: wrap too long logs, instead of trimming them.
 

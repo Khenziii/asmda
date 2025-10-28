@@ -2,8 +2,8 @@ use crate::tui::table::tasks_table::item::TasksTableItem;
 use crate::tui::table::{Table, TableItem};
 use crate::tui::utils::{format_new_rows, get_centered_cell_from_string};
 use comfy_table::Table as ComfyTable;
+use comfy_table::modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS};
 use comfy_table::presets::UTF8_FULL;
-use comfy_table::modifiers::{UTF8_SOLID_INNER_BORDERS, UTF8_ROUND_CORNERS};
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -49,7 +49,9 @@ impl Table<TasksTableItem> for TasksTable {
             let mut row: Vec<String> = Vec::new();
             row.push(name.to_string());
             row.append(&mut item.get_value_as_string_array());
-            let stylized_row = row.iter().map(|string| get_centered_cell_from_string(string));
+            let stylized_row = row
+                .iter()
+                .map(|string| get_centered_cell_from_string(string));
             self.table.add_row(stylized_row);
         }
     }

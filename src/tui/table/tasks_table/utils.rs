@@ -1,5 +1,5 @@
 use crate::tui::table::Table;
-use crate::tui::table::tasks_table::{table::TasksTable, item::TasksTableItem};
+use crate::tui::table::tasks_table::{item::TasksTableItem, table::TasksTable};
 use crate::tui::table::utils::ThreadSafeTaskData;
 
 pub fn add_tasks_to_tasks_table(tasks: Vec<ThreadSafeTaskData>, table: &mut TasksTable) {
@@ -16,7 +16,10 @@ pub fn add_tasks_to_tasks_table(tasks: Vec<ThreadSafeTaskData>, table: &mut Task
     }
 }
 
-pub fn get_tasks_table_height_by_tasks(tasks: Vec<ThreadSafeTaskData>, table: &mut TasksTable) -> usize {
+pub fn get_tasks_table_height_by_tasks(
+    tasks: Vec<ThreadSafeTaskData>,
+    table: &mut TasksTable,
+) -> usize {
     table.reinitialize();
     add_tasks_to_tasks_table(tasks, table);
     table.get_height()
