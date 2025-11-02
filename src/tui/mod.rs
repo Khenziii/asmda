@@ -2,7 +2,7 @@ pub mod table;
 pub mod types;
 pub mod utils;
 
-use crate::utils::terminal::clear_previous_lines;
+use crate::utils::terminal::{clear_previous_lines, println};
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
 use types::NewRowCallback;
@@ -30,7 +30,7 @@ impl TerminalUserInterface {
 
     fn print(&self) {
         for row in &self.rows {
-            println!("{}", row);
+            println(row);
         }
     }
 
@@ -42,7 +42,7 @@ impl TerminalUserInterface {
             let height_difference = current_height - previous_height.unwrap();
 
             for _ in 0..height_difference {
-                println!();
+                println("");
             }
         }
 

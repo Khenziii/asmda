@@ -5,6 +5,7 @@ pub mod logger;
 pub mod schedule;
 pub mod tui;
 pub mod utils;
+pub mod input;
 
 use logger::logger;
 use schedule::Scheduler;

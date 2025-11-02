@@ -6,3 +6,4 @@ pub mod terminal;
 pub mod tests;
 pub mod time;
 pub mod uuid;
+pub mod exit;

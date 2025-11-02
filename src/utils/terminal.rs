@@ -7,6 +7,11 @@ use std::io::{Stdout, stdout};
 use std::sync::{Arc, Mutex};
 use strip_ansi_escapes;
 
+// We're using raw mode. Terminal won't automatically handle this for us.
+pub fn println(string: &str) {
+    print!("{}\r\n", string);
+}
+
 // Removes ANSI codes added by `colored` crate used in our logger.
 pub fn strip_color_from_string(string: String) -> String {
     let stripped = strip_ansi_escapes::strip(string);

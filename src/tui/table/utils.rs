@@ -4,7 +4,7 @@ use crate::tui::table::tasks_table::utils::{
 };
 use crate::tui::table::{Table, tasks_table::table::TasksTable};
 use crate::tui::{self, TerminalUserInterface};
-use crate::utils::terminal::refresh_table_in_tui;
+use crate::utils::terminal::{refresh_table_in_tui, println};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
@@ -56,7 +56,7 @@ fn add_initial_table_padding(table: Arc<Mutex<TasksTable>>) {
         get_tasks_table_height_by_tasks(thread_safe_task_data.clone(), &mut locked_table);
 
     for _ in 0..table_future_height {
-        println!();
+        println("");
     }
 }
 
