@@ -65,6 +65,7 @@ dependencies = [
  "rustls",
  "serde_json",
  "serial_test",
+ "signal-hook",
  "strip-ansi-escapes",
  "tokio",
  "uuid",

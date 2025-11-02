@@ -11,7 +11,7 @@ pub struct UserInputEvent {
     on_trigger: Box<dyn Fn()>,
 }
 
-pub fn get_handled_events() -> Vec<UserInputEvent> {
+fn get_handled_events() -> Vec<UserInputEvent> {
     let mut handled_events: Vec<UserInputEvent> = vec![];
 
     handled_events.push(UserInputEvent {
@@ -38,7 +38,7 @@ impl Default for UserInputHandler {
 
 impl UserInputHandler {
     pub fn new() -> Self {
-        UserInputHandler {
+        Self {
             events_check_frequency: 500,
         }
     }

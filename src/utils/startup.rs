@@ -1,5 +1,6 @@
 use crate::environment;
 use crate::input::UserInputHandler;
+use crate::signals::SignalsHandler;
 use crate::logger::logger;
 use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};
 use crossterm::ExecutableCommand;
@@ -34,12 +35,18 @@ pub fn setup_user_event_loop() {
     handler.run();
 }
 
+pub fn setup_signals_event_loop() {
+    let handler = SignalsHandler::new();
+    handler.run();
+}
+
 pub fn startup() {
     install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
     enable_terminal_alternate_screen_mode();
     enable_terminal_raw_mode();
     setup_user_event_loop();
+    setup_signals_event_loop();
 }
 
 #[cfg(test)]
