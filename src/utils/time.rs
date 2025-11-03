@@ -1,4 +1,12 @@
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use chrono::{DateTime, Local};
+
+// Format is as follows: 
+pub fn get_current_formatted_date() -> String {
+    let now = SystemTime::now();
+    let datetime: DateTime<Local> = now.into();
+    datetime.format("%Y/%m/%d - %H:%M:%S").to_string()
+}
 
 pub fn system_time_to_str(system_time: SystemTime) -> String {
     let timestamp = system_time

@@ -1,4 +1,5 @@
 use crate::environment::{environment, types::RunningEnvironment};
+use crate::utils::time::get_current_formatted_date;
 use crate::tui;
 use colored::Colorize;
 use once_cell::sync::OnceCell;
@@ -34,6 +35,13 @@ impl Logger {
         interface.add_row(log, true, true);
     }
 
+    fn write_with_date(&mut self, log: String) {
+        let current_formatted_date = get_current_formatted_date();
+        let colored_current_formatted_date = current_formatted_date.white();
+        let formatted_log = format!("{} > {}", colored_current_formatted_date, log);
+        self.write(formatted_log);
+    }
+    
     pub fn debug(&mut self, log: &str) {
         let config = environment();
         if config.metadata.running_environment == RunningEnvironment::Production {
@@ -41,22 +49,22 @@ impl Logger {
         }
 
         let str = format!("{}", &log.blue());
-        self.write(str);
+        self.write_with_date(str);
     }
 
     pub fn log(&mut self, log: &str) {
         let str = format!("{}", &log.white());
-        self.write(str);
+        self.write_with_date(str);
     }
 
     pub fn warn(&mut self, log: &str) {
         let str = format!("{}", &log.yellow());
-        self.write(str);
+        self.write_with_date(str);
     }
 
     pub fn error(&mut self, log: &str) {
         let str = format!("{}", &log.red());
-        self.write(str);
+        self.write_with_date(str);
     }
 
     pub fn get_history_buffer_as_string(&self) -> String {

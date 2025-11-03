@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 async-trait = "0.1.89"
+chrono = "0.4.42"
 colored = "3.0.0"
 comfy-table = "=7.2.1"
 crossterm = "0.29.0"

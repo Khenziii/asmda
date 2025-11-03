@@ -4,6 +4,7 @@ use crate::tui::utils::{format_new_rows, get_centered_cell_from_string};
 use comfy_table::Table as ComfyTable;
 use comfy_table::modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS};
 use comfy_table::presets::UTF8_FULL;
+use colored::Colorize;
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -20,7 +21,8 @@ impl Table<TasksTableItem> for TasksTable {
 
     fn as_string_array(&self) -> Vec<String> {
         let as_string = format!("{}", self.table);
-        format_new_rows(vec![as_string])
+        let rows = format_new_rows(vec![as_string]);
+        rows.iter().map(|row_string| row_string.white().to_string()).collect()
     }
 
     // Resets the table to the base state.
