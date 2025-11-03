@@ -1,14 +1,12 @@
 use comfy_table::{Cell, CellAlignment};
 use crossterm::terminal::size;
+use crate::utils::terminal::strip_color_from_string;
 
-// TODO: wrap too long logs, instead of trimming them.
-
-// Splits strings with newline characters into new lines, and trims them if they're too long.
+// Splits strings with newline characters into new lines, and then splits them up again if they're too long.
 pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
     let max_log_length: usize = match size() {
-        // We're multiplying this 2 times as crossterm seems to underestimate how large terminals
-        // really are ;-;. I'll implement some text wrapping later and ditch this anyway.
-        Ok((_, rows)) => (rows as f32 * 1.5) as usize,
+        // The padding looks nice.
+        Ok((columns, _)) => (columns - 1) as usize,
         Err(_) => 100,
     };
 
@@ -19,14 +17,22 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
 
     let mut formatted_rows = Vec::new();
     for row in splitted_rows {
-        let taken_chars: String = row.chars().take(max_log_length).collect();
-        let formatted_row: String = if taken_chars.len() == max_log_length {
-            format!("{}...", taken_chars)
-        } else {
-            taken_chars
-        };
+        let mut current_string = String::new();
+        for character in row.chars() {
+            current_string.push(character);
+            
+            // We need to remove the ANSI codes to estimate width correctly.
+            let visible_string_length = strip_color_from_string(current_string.clone()).len();
 
-        formatted_rows.push(formatted_row);
+            if visible_string_length >= max_log_length {
+                formatted_rows.push(current_string.clone());
+                current_string = String::new();
+            }
+        }
+
+        if !current_string.is_empty() {
+            formatted_rows.push(current_string);
+        }
     }
 
     formatted_rows

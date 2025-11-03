@@ -12,14 +12,24 @@ pub struct UserInputEvent {
 }
 
 fn get_handled_events() -> Vec<UserInputEvent> {
-    vec![UserInputEvent {
-        key: KeyCode::Char('c'),
-        modifier: KeyModifiers::CONTROL,
-        on_trigger: Box::new(|| {
-            logger().log("^C");
-            exit();
-        }),
-    }]
+    vec![
+        UserInputEvent {
+            key: KeyCode::Char('c'),
+            modifier: KeyModifiers::CONTROL,
+            on_trigger: Box::new(|| {
+                logger().log("^C");
+                exit();
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('q'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                logger().log("q");
+                exit();
+            }),
+        },
+    ]
 }
 
 pub struct UserInputHandler {
