@@ -1,9 +1,10 @@
 use crate::environment;
 use crate::input::UserInputHandler;
-use crate::signals::SignalsHandler;
 use crate::logger::logger;
-use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};
+use crate::signals::SignalsHandler;
+use crate::utils::tests::is_test_environment;
 use crossterm::ExecutableCommand;
+use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
 use rustls;
 use std::io::stdout;
 
@@ -23,7 +24,9 @@ pub fn install_crypto_ring_default_provider() {
 
 pub fn enable_terminal_alternate_screen_mode() {
     let mut output_stream = stdout();
-    output_stream.execute(EnterAlternateScreen).expect("Failed to enter alternate screen mode! TUI might fail.");
+    output_stream
+        .execute(EnterAlternateScreen)
+        .expect("Failed to enter alternate screen mode! TUI might fail.");
 }
 
 pub fn enable_terminal_raw_mode() {
@@ -43,10 +46,12 @@ pub fn setup_signals_event_loop() {
 pub fn startup() {
     install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
-    enable_terminal_alternate_screen_mode();
-    enable_terminal_raw_mode();
-    setup_user_event_loop();
-    setup_signals_event_loop();
+    if !is_test_environment() {
+        enable_terminal_alternate_screen_mode();
+        enable_terminal_raw_mode();
+        setup_user_event_loop();
+        setup_signals_event_loop();
+    }
 }
 
 #[cfg(test)]

@@ -1,7 +1,7 @@
-use crate::environment::{environment, types::RunningEnvironment};
-use crate::utils::time::get_current_formatted_date;
+pub mod log;
+
 use crate::tui;
-use colored::Colorize;
+use log::{LogBuilder, LogLevel};
 use once_cell::sync::OnceCell;
 use std::io::{Cursor, Write};
 use std::sync::{Mutex, MutexGuard};
@@ -23,6 +23,17 @@ impl Logger {
         }
     }
 
+    pub fn reinitialize(&mut self) {
+        *self = Logger::new();
+    }
+
+    pub fn get_history_buffer_as_string(&self) -> String {
+        String::from_utf8(self.history_buffer.clone().into_inner())
+            .unwrap()
+            .trim_end()
+            .to_string()
+    }
+
     fn add_log_to_history_buffer(&mut self, log: String) {
         writeln!(self.history_buffer, "{}", log)
             .expect("Failed to write to history buffer! Logger's history won't be accessible.");
@@ -35,47 +46,59 @@ impl Logger {
         interface.add_row(log, true, true);
     }
 
-    fn write_with_date(&mut self, log: String) {
-        let current_formatted_date = get_current_formatted_date();
-        let colored_current_formatted_date = current_formatted_date.white();
-        let formatted_log = format!("{} > {}", colored_current_formatted_date, log);
-        self.write(formatted_log);
-    }
-    
     pub fn debug(&mut self, log: &str) {
-        let config = environment();
-        if config.metadata.running_environment == RunningEnvironment::Production {
-            return;
-        }
+        let log_builder = LogBuilder::new(log)
+            .add_date()
+            .only_in_dev_env()
+            .set_level(LogLevel::Debug);
+        self.write(log_builder.build());
+    }
 
-        let str = format!("{}", &log.blue());
-        self.write_with_date(str);
+    pub fn debug_without_date(&mut self, log: &str) {
+        let log_builder = LogBuilder::new(log)
+            .only_in_dev_env()
+            .set_level(LogLevel::Debug);
+        self.write(log_builder.build());
     }
 
     pub fn log(&mut self, log: &str) {
-        let str = format!("{}", &log.white());
-        self.write_with_date(str);
+        let log_builder = LogBuilder::new(log)
+            .add_date()
+            .set_level(LogLevel::Log);
+        self.write(log_builder.build());
+    }
+
+    pub fn log_without_date(&mut self, log: &str) {
+        let log_builder = LogBuilder::new(log)
+            .set_level(LogLevel::Debug);
+        self.write(log_builder.build());
     }
 
     pub fn warn(&mut self, log: &str) {
-        let str = format!("{}", &log.yellow());
-        self.write_with_date(str);
+        let log_builder = LogBuilder::new(log)
+            .add_date()
+            .set_level(LogLevel::Warn);
+        self.write(log_builder.build());
     }
+
+    pub fn warn_without_date(&mut self, log: &str) {
+        let log_builder = LogBuilder::new(log)
+            .set_level(LogLevel::Warn);
+        self.write(log_builder.build());
+    }
+
 
     pub fn error(&mut self, log: &str) {
-        let str = format!("{}", &log.red());
-        self.write_with_date(str);
+        let log_builder = LogBuilder::new(log)
+            .add_date()
+            .set_level(LogLevel::Error);
+        self.write(log_builder.build());
     }
 
-    pub fn get_history_buffer_as_string(&self) -> String {
-        String::from_utf8(self.history_buffer.clone().into_inner())
-            .unwrap()
-            .trim_end()
-            .to_string()
-    }
-
-    pub fn reinitialize(&mut self) {
-        *self = Logger::new();
+    pub fn error_without_date(&mut self, log: &str) {
+        let log_builder = LogBuilder::new(log)
+            .set_level(LogLevel::Error);
+        self.write(log_builder.build());
     }
 }
 
@@ -97,9 +120,9 @@ mod tests {
 
         #[test]
         fn reinitialization_works() {
-            logger().log("hi!");
+            logger().log_without_date("hi!");
             logger().reinitialize();
-            logger().log("hey!");
+            logger().log_without_date("hey!");
 
             let output = strip_color_from_string(logger().get_history_buffer_as_string());
             assert_eq!(output, "hey!");
