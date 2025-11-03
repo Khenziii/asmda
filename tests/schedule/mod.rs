@@ -1,4 +1,4 @@
-use asmda::logger;
+use asmda::logger::logger;
 use asmda::schedule;
 use asmda::schedule::tasks::Task;
 use asmda::schedule::tasks::utils::types::TaskConfig;
@@ -15,21 +15,21 @@ static SECOND_COUNTER: Lazy<Arc<Mutex<u32>>> = Lazy::new(|| Arc::new(Mutex::new(
 static THIRD_TIMER: Lazy<Arc<Mutex<SystemTime>>> = Lazy::new(|| Arc::new(SystemTime::now().into()));
 
 async fn first_task_callback() {
-    logger::debug("First task running!");
+    logger().debug("First task running!");
 
     let mut lock = FIRST_COUNTER.lock().unwrap();
     *lock += 1;
 }
 
 async fn second_task_callback() {
-    logger::debug("Second task running!");
+    logger().debug("Second task running!");
 
     let mut lock = SECOND_COUNTER.lock().unwrap();
     *lock += 1;
 }
 
 async fn third_task_callback() {
-    logger::debug("Third task running!");
+    logger().debug("Third task running!");
 
     let mut lock = THIRD_TIMER.lock().unwrap();
     *lock = SystemTime::now();

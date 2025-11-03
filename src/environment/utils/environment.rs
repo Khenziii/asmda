@@ -1,6 +1,7 @@
 use crate::environment::constants::{EnvironmentVariable, RunningEnvironment};
 use crate::environment::utils::generic::{as_boolean, get_running_environment};
 use crate::utils::encryption::Decryptor;
+use crate::utils::multithreading;
 
 pub trait EnvironmentVariableGetterResultParser {
     fn from_result(value: Option<String>, context: EnvironmentVariable) -> Self;
@@ -20,10 +21,7 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        match value {
-            Some(v) => Some(v.replace("\\n", "\n")),
-            None => None,
-        }
+        value.map(|v| v.replace("\\n", "\n"))
     }
 }
 
@@ -44,7 +42,9 @@ fn get_env_var_by_with_potential_fallback<T: EnvironmentVariableGetterResultPars
     T::from_result(value, variable)
 }
 
-pub fn get_env_var<T: EnvironmentVariableGetterResultParser>(variable: EnvironmentVariable) -> T {
+async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
+    variable: EnvironmentVariable,
+) -> T {
     let using_encryption_str =
         get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
     let using_encryption = as_boolean(using_encryption_str);
@@ -59,10 +59,16 @@ pub fn get_env_var<T: EnvironmentVariableGetterResultParser>(variable: Environme
             EnvironmentVariable::SecretsDecryptionKeyPassphrase,
         );
 
-        let decryptor = Decryptor::new_sync(key, key_passphrase);
-        let decrypted = decryptor.decrypt_sync(value.unwrap());
+        let decryptor = Decryptor::new(key, key_passphrase).await;
+        let decrypted = decryptor.decrypt(value.unwrap()).await;
         value = Some(decrypted);
     }
 
     T::from_result(value, variable)
+}
+
+pub fn get_env_var<T: EnvironmentVariableGetterResultParser + Send + 'static>(
+    variable: EnvironmentVariable,
+) -> T {
+    multithreading::block_on(get_env_var_async(variable))
 }

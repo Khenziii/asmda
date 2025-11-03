@@ -5,7 +5,10 @@ edition = "2024"
 
 [dependencies]
 async-trait = "0.1.89"
+chrono = "0.4.42"
 colored = "3.0.0"
+comfy-table = "=7.2.1"
+crossterm = "0.29.0"
 dirs = "6.0.0"
 dotenv = "0.15.0"
 fantoccini = { version = "0.22.0", default-features = false, features = ["rustls-tls"] }
@@ -16,6 +19,9 @@ rusqlite = { version = "0.37.0", features = ["bundled"] }
 rust-s3 = { version = "0.36.0", default-features = false, features = ["tokio-rustls-tls"]}
 rustls = { version = "0.23.32", features = ["ring"] }
 serde_json = "1.0.143"
+serial_test = "3.2.0"
+signal-hook = "0.3.18"
+strip-ansi-escapes = "0.2.1"
 tokio = { version = "1.47.1", features = ["full"] }
 
 [dependencies.uuid]

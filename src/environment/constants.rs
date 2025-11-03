@@ -75,6 +75,7 @@ impl EnvironmentVariable {
             return false;
         }
 
+        #[allow(clippy::match_like_matches_macro)]
         match self {
             Self::SecretsDecryptionKey | Self::SecretsDecryptionKeyPassphrase => false,
             _ => true,

@@ -31,6 +31,7 @@ impl TestBrowserAPIWrapper {
 mod tests {
     mod browser {
         use super::super::*;
+        use asmda::logger::logger;
         use asmda::utils::startup::install_crypto_ring_default_provider;
         use std::time::Duration;
         use tokio::time::sleep;
@@ -42,7 +43,7 @@ mod tests {
 
             // We connect the first client to WebDriver and wait for a while.
             let first_webdriver_connection_handle = tokio::spawn(async move {
-                println!("first webdriver connected!");
+                logger().debug("first webdriver connected!");
 
                 let first_test_browser = TestBrowserAPIWrapper::new().await;
                 let returned_value = first_test_browser
@@ -55,7 +56,7 @@ mod tests {
 
             // Now this connection could fail, as one client is already connected.
             let _second_webdriver_connection_handle = tokio::spawn(async move {
-                println!("second webdriver connected!");
+                logger().debug("second webdriver connected!");
 
                 let second_test_browser = TestBrowserAPIWrapper::new().await;
                 let returned_value = second_test_browser
@@ -68,7 +69,7 @@ mod tests {
 
             // We kill the first connection.
             first_webdriver_connection_handle.abort();
-            println!("first webdriver disconnected!");
+            logger().debug("first webdriver disconnected!");
 
             // And now, after a while the second client should be able to connect and (if it didn't
             // do it before) extract our wanted data.

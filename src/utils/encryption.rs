@@ -1,4 +1,3 @@
-use crate::utils::multithreading;
 use pgp::{decrypt as pgp_decrypt, native::SignedSecretKey, read_skey_from_string};
 
 pub struct Decryptor {
@@ -14,10 +13,6 @@ impl Decryptor {
         Self { key, key_password }
     }
 
-    pub fn new_sync(key_str: String, key_password: String) -> Self {
-        multithreading::block_on(Decryptor::new(key_str, key_password))
-    }
-
     pub async fn decrypt(&self, encrypted: String) -> String {
         let decrypted_bytes = pgp_decrypt(self.key.clone(), &self.key_password, encrypted.into())
             .await
@@ -26,10 +21,6 @@ impl Decryptor {
             .unwrap()
             .trim_end()
             .to_string()
-    }
-
-    pub fn decrypt_sync(&self, encrypted: String) -> String {
-        multithreading::block_on(self.decrypt(encrypted))
     }
 }
 
