@@ -121,7 +121,7 @@ mod tests {
             logger().reinitialize();
             tui().reinitialize();
             setup_tui();
-            logger().log("Starting up...");
+            logger().log_without_date("Starting up...");
 
             let output = strip_color_from_strings(tui().get_rows());
             assert_eq!(

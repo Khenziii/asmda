@@ -126,9 +126,9 @@ mod tests {
         #[serial]
         fn formats_new_lines_properly() {
             logger().reinitialize();
-            logger().log("first\n\n\nsecond");
-            logger().log("third");
-            logger().log("fourth");
+            logger().log_without_date("first\n\n\nsecond");
+            logger().log_without_date("third");
+            logger().log_without_date("fourth");
 
             let output = strip_color_from_string(logger().get_history_buffer_as_string());
             assert_eq!(output, "first\n\n\nsecond\nthird\nfourth")
