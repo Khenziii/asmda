@@ -1,6 +1,6 @@
-use colored::Colorize;
 use crate::environment::{environment, types::RunningEnvironment};
 use crate::utils::time::get_current_formatted_date;
+use colored::Colorize;
 
 pub enum LogLevel {
     Debug,
@@ -18,7 +18,11 @@ pub struct LogBuilder {
 
 impl LogBuilder {
     pub fn new(default_content: &str) -> Self {
-        Self { log: default_content.to_string(), date: None, printable: true }
+        Self {
+            log: default_content.to_string(),
+            date: None,
+            printable: true,
+        }
     }
 
     pub fn build(&self) -> String {
@@ -58,5 +62,3 @@ impl LogBuilder {
         self.clone()
     }
 }
-
-

@@ -1,7 +1,6 @@
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use chrono::{DateTime, Local};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-// Format is as follows: 
 pub fn get_current_formatted_date() -> String {
     let now = SystemTime::now();
     let datetime: DateTime<Local> = now.into();

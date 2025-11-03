@@ -29,17 +29,11 @@ impl Scheduler {
 
                     tokio::time::sleep(time_until_next_run).await;
 
-                    logger().log(&format!(
-                        "Archiving {}...",
-                        app_name.as_str(),
-                    ));
+                    logger().log(&format!("Archiving {}...", app_name.as_str(),));
 
                     task.run().await;
 
-                    logger().log(&format!(
-                        "Finished archiving {}!",
-                        app_name.as_str(),
-                    ));
+                    logger().log(&format!("Finished archiving {}!", app_name.as_str(),));
                 }
             });
         }

@@ -4,7 +4,7 @@ use crate::tui::table::tasks_table::utils::{
 };
 use crate::tui::table::{Table, tasks_table::table::TasksTable};
 use crate::tui::{self, TerminalUserInterface};
-use crate::utils::terminal::{refresh_table_in_tui, println};
+use crate::utils::terminal::{println, refresh_table_in_tui};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;

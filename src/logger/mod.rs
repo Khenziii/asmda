@@ -62,42 +62,32 @@ impl Logger {
     }
 
     pub fn log(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .add_date()
-            .set_level(LogLevel::Log);
+        let log_builder = LogBuilder::new(log).add_date().set_level(LogLevel::Log);
         self.write(log_builder.build());
     }
 
     pub fn log_without_date(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .set_level(LogLevel::Debug);
+        let log_builder = LogBuilder::new(log).set_level(LogLevel::Debug);
         self.write(log_builder.build());
     }
 
     pub fn warn(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .add_date()
-            .set_level(LogLevel::Warn);
+        let log_builder = LogBuilder::new(log).add_date().set_level(LogLevel::Warn);
         self.write(log_builder.build());
     }
 
     pub fn warn_without_date(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .set_level(LogLevel::Warn);
+        let log_builder = LogBuilder::new(log).set_level(LogLevel::Warn);
         self.write(log_builder.build());
     }
 
-
     pub fn error(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .add_date()
-            .set_level(LogLevel::Error);
+        let log_builder = LogBuilder::new(log).add_date().set_level(LogLevel::Error);
         self.write(log_builder.build());
     }
 
     pub fn error_without_date(&mut self, log: &str) {
-        let log_builder = LogBuilder::new(log)
-            .set_level(LogLevel::Error);
+        let log_builder = LogBuilder::new(log).set_level(LogLevel::Error);
         self.write(log_builder.build());
     }
 }

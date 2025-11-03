@@ -1,12 +1,12 @@
 pub mod api_wrappers;
 pub mod archivers;
 pub mod environment;
+pub mod input;
 pub mod logger;
 pub mod schedule;
+pub mod signals;
 pub mod tui;
 pub mod utils;
-pub mod input;
-pub mod signals;
 
 use logger::logger;
 use schedule::Scheduler;
