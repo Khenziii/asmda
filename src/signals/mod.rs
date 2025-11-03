@@ -9,18 +9,16 @@ pub struct SignalEvent {
 }
 
 fn get_handled_events() -> Vec<SignalEvent> {
-    let mut handled_events: Vec<SignalEvent> = vec![];
-
-    handled_events.push(SignalEvent {
-        signal: SIGINT,
-        on_trigger: Box::new(|| exit()),
-    });
-    handled_events.push(SignalEvent {
-        signal: SIGTERM,
-        on_trigger: Box::new(|| exit()),
-    });
-
-    handled_events
+    vec![
+        SignalEvent {
+            signal: SIGINT,
+            on_trigger: Box::new(exit),
+        },
+        SignalEvent {
+            signal: SIGTERM,
+            on_trigger: Box::new(exit),
+        },
+    ]
 }
 
 fn get_handled_event_keys() -> Vec<i32> {
@@ -47,7 +45,7 @@ impl Default for SignalsHandler {
 impl SignalsHandler {
     pub fn new() -> Self {
         Self {
-            signals: Signals::new(&get_handled_event_keys()).unwrap(),
+            signals: Signals::new(get_handled_event_keys()).unwrap(),
         }
     }
 

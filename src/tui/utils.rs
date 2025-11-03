@@ -19,14 +19,12 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
 
     let mut formatted_rows = Vec::new();
     for row in splitted_rows {
-        let formatted_row: String;
-
         let taken_chars: String = row.chars().take(max_log_length).collect();
-        if taken_chars.len() == max_log_length {
-            formatted_row = format!("{}...", taken_chars);
+        let formatted_row: String = if taken_chars.len() == max_log_length {
+            format!("{}...", taken_chars)
         } else {
-            formatted_row = taken_chars;
-        }
+            taken_chars
+        };
 
         formatted_rows.push(formatted_row);
     }

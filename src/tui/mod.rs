@@ -38,8 +38,8 @@ impl TerminalUserInterface {
     // to keep everything synchronised. If it's the same, passing just `None` is completely fine.
     pub fn rerender(&self, previous_height: Option<usize>) {
         let current_height = self.get_height();
-        if previous_height.is_some() {
-            let height_difference = current_height - previous_height.unwrap();
+        if let Some(previous_height_raw) = previous_height {
+            let height_difference = current_height - previous_height_raw;
 
             for _ in 0..height_difference {
                 println("");

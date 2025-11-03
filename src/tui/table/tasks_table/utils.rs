@@ -9,7 +9,7 @@ pub fn add_tasks_to_tasks_table(tasks: Vec<ThreadSafeTaskData>, table: &mut Task
             id.to_string(),
             TasksTableItem {
                 name: task.name,
-                next_run: format!("{}s", task.next_run.as_secs().to_string()),
+                next_run: format!("{}s", task.next_run.as_secs()),
             },
         );
         id += 1;

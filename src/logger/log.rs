@@ -31,7 +31,7 @@ impl LogBuilder {
         }
 
         if self.date.is_some() {
-            return format!("{} > {}", self.date.clone().unwrap(), self.log);
+            format!("{} > {}", self.date.clone().unwrap(), self.log)
         } else {
             self.log.clone()
         }

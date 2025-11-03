@@ -12,18 +12,14 @@ pub struct UserInputEvent {
 }
 
 fn get_handled_events() -> Vec<UserInputEvent> {
-    let mut handled_events: Vec<UserInputEvent> = vec![];
-
-    handled_events.push(UserInputEvent {
+    vec![UserInputEvent {
         key: KeyCode::Char('c'),
         modifier: KeyModifiers::CONTROL,
         on_trigger: Box::new(|| {
             logger().log("^C");
             exit();
         }),
-    });
-
-    handled_events
+    }]
 }
 
 pub struct UserInputHandler {
@@ -45,16 +41,15 @@ impl UserInputHandler {
 
     fn handle_events(&self) {
         loop {
-            if event::poll(Duration::from_millis(self.events_check_frequency)).unwrap() {
-                if let Event::Key(KeyEvent {
+            if event::poll(Duration::from_millis(self.events_check_frequency)).unwrap()
+                && let Event::Key(KeyEvent {
                     code, modifiers, ..
                 }) = event::read().unwrap()
-                {
-                    let event_handlers = get_handled_events();
-                    for handler in event_handlers {
-                        if handler.key == code && handler.modifier == modifiers {
-                            (handler.on_trigger)();
-                        }
+            {
+                let event_handlers = get_handled_events();
+                for handler in event_handlers {
+                    if handler.key == code && handler.modifier == modifiers {
+                        (handler.on_trigger)();
                     }
                 }
             }
