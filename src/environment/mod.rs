@@ -7,7 +7,7 @@ use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment};
 use utils::environment::get_env_var;
-use utils::generic::{as_boolean, get_database_path, get_running_environment};
+use utils::generic::{as_boolean, get_database_path, get_running_environment, get_logs_directory_path};
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
 
@@ -18,6 +18,7 @@ pub fn environment() -> &'static Environment {
             metadata: Metadata {
                 database_path: get_database_path(),
                 running_environment: get_running_environment(),
+                logs_directory_path: get_logs_directory_path(),
             },
             letterboxd: LetterboxdEnvironment {
                 password: get_env_var(LetterboxdPassword),
