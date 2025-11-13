@@ -1,6 +1,6 @@
+use crate::utils::terminal::strip_color_from_string;
 use comfy_table::{Cell, CellAlignment};
 use crossterm::terminal::size;
-use crate::utils::terminal::strip_color_from_string;
 
 // Splits strings with newline characters into new lines, and then splits them up again if they're too long.
 pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
@@ -20,7 +20,7 @@ pub fn format_new_rows(rows: Vec<String>) -> Vec<String> {
         let mut current_string = String::new();
         for character in row.chars() {
             current_string.push(character);
-            
+
             // We need to remove the ANSI codes to estimate width correctly.
             let visible_string_length = strip_color_from_string(current_string.clone()).len();
 

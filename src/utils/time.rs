@@ -7,6 +7,12 @@ pub fn get_current_formatted_date() -> String {
     datetime.format("%Y/%m/%d - %H:%M:%S").to_string()
 }
 
+pub fn get_current_path_friendly_formatted_date() -> String {
+    let now = SystemTime::now();
+    let datetime: DateTime<Local> = now.into();
+    datetime.format("%Y-%m-%dT%H:%M:%S").to_string()
+}
+
 pub fn system_time_to_str(system_time: SystemTime) -> String {
     let timestamp = system_time
         .duration_since(UNIX_EPOCH)

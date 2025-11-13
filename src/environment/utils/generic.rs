@@ -28,3 +28,19 @@ pub fn get_database_path() -> String {
         String::from("asmda.sqlite")
     }
 }
+
+pub fn get_logs_directory_path() -> String {
+    let running_environment = get_running_environment();
+
+    if running_environment == RunningEnvironment::Production {
+        let state_dir = dirs::state_dir()
+            .expect("Failed to get the state dir!")
+            .to_str()
+            .unwrap()
+            .to_string();
+        let apps_logs_state_dir = format!("{}/asmda/logs", state_dir);
+        apps_logs_state_dir
+    } else {
+        String::from("./logs")
+    }
+}
