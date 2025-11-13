@@ -2,8 +2,8 @@ pub mod table;
 pub mod types;
 pub mod utils;
 
+use crate::utils::logs::{set_logs_to_string_array, validate_log_directory_setup};
 use crate::utils::terminal::{clear_previous_lines, println, strip_color_from_strings};
-use crate::utils::logs::{validate_log_directory_setup, set_logs_to_string_array};
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
 use types::NewRowCallback;
