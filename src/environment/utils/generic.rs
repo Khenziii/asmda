@@ -38,9 +38,9 @@ pub fn get_logs_directory_path() -> String {
             .to_str()
             .unwrap()
             .to_string();
-        let apps_state_dir = format!("{}/asmda", state_dir);
-        apps_state_dir
+        let apps_logs_state_dir = format!("{}/asmda/logs", state_dir);
+        apps_logs_state_dir
     } else {
-        String::from(".")
+        String::from("./logs")
     }
 }

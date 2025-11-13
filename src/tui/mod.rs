@@ -3,6 +3,7 @@ pub mod types;
 pub mod utils;
 
 use crate::utils::terminal::{clear_previous_lines, println};
+use crate::utils::logs::{validate_log_directory_setup, set_logs_to_string_array};
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
 use types::NewRowCallback;
@@ -12,19 +13,25 @@ use utils::format_new_rows;
 pub struct TerminalUserInterface {
     rows: Vec<String>,
     new_rows_callbacks: Vec<NewRowCallback>,
+    sync_to_log_file_on_update: bool,
 }
 
 impl Default for TerminalUserInterface {
     fn default() -> Self {
-        Self::new()
+        Self::new(false)
     }
 }
 
 impl TerminalUserInterface {
-    pub fn new() -> Self {
+    pub fn new(sync_to_log_file_on_update: bool) -> Self {
+        if sync_to_log_file_on_update {
+            validate_log_directory_setup();
+        }
+
         TerminalUserInterface {
             rows: Vec::new(),
             new_rows_callbacks: Vec::new(),
+            sync_to_log_file_on_update,
         }
     }
 
@@ -48,6 +55,9 @@ impl TerminalUserInterface {
 
         clear_previous_lines(current_height, None);
         self.print();
+
+        // Write current TUI state to log file.
+        set_logs_to_string_array(self.rows.clone());
     }
 
     pub fn get_height(&self) -> usize {
@@ -101,14 +111,14 @@ impl TerminalUserInterface {
     }
 
     pub fn reinitialize(&mut self) {
-        *self = TerminalUserInterface::new();
+        *self = TerminalUserInterface::new(self.sync_to_log_file_on_update);
     }
 }
 
 static TUI: OnceCell<Mutex<TerminalUserInterface>> = OnceCell::new();
 
 fn get_tui() -> &'static Mutex<TerminalUserInterface> {
-    TUI.get_or_init(|| Mutex::new(TerminalUserInterface::new()))
+    TUI.get_or_init(|| Mutex::new(TerminalUserInterface::new(true)))
 }
 
 pub fn tui() -> MutexGuard<'static, TerminalUserInterface> {

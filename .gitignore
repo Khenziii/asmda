@@ -1,3 +1,5 @@
 /target
 .env
 asmda.sqlite
+latest.log
+logs
