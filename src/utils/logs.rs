@@ -50,8 +50,12 @@ pub fn validate_log_directory_setup() {
     let logs_directory_path = get_logs_directory_path();
 
     if !logs_directory_path.clone().exists() {
-        fs::create_dir_all(logs_directory_path.clone()).unwrap_or_else(|_| panic!("Failed to create the logs directory! ({}) Logs won't be available.",
-            logs_directory_path.clone().to_str().unwrap()));
+        fs::create_dir_all(logs_directory_path.clone()).unwrap_or_else(|_| {
+            panic!(
+                "Failed to create the logs directory! ({}) Logs won't be available.",
+                logs_directory_path.clone().to_str().unwrap()
+            )
+        });
     }
 
     let current_formatted_date = get_current_path_friendly_formatted_date();
