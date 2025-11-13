@@ -50,10 +50,8 @@ pub fn validate_log_directory_setup() {
     let logs_directory_path = get_logs_directory_path();
 
     if !logs_directory_path.clone().exists() {
-        fs::create_dir_all(logs_directory_path.clone()).expect(&format!(
-            "Failed to create the logs directory! ({}) Logs won't be available.",
-            logs_directory_path.clone().to_str().unwrap()
-        ));
+        fs::create_dir_all(logs_directory_path.clone()).unwrap_or_else(|_| panic!("Failed to create the logs directory! ({}) Logs won't be available.",
+            logs_directory_path.clone().to_str().unwrap()));
     }
 
     let current_formatted_date = get_current_path_friendly_formatted_date();
@@ -69,7 +67,7 @@ pub fn validate_log_directory_setup() {
     fs::remove_file(latest_log_symlink_path.clone()).ok();
 
     create_symlink(&PathBuf::from(new_log_file_path), &latest_log_symlink_path)
-        .expect(&format!("Failed to create latest log symlink! ({}) Logs at the standardized location *will* be missing.", latest_log_symlink_path.to_str().unwrap()));
+        .unwrap_or_else(|_| panic!("Failed to create latest log symlink! ({}) Logs at the standardized location *will* be missing.", latest_log_symlink_path.to_str().unwrap()));
 }
 
 pub fn set_logs_to_string_array(new_logs: Vec<String>) {
