@@ -2,7 +2,7 @@ pub mod table;
 pub mod types;
 pub mod utils;
 
-use crate::utils::terminal::{clear_previous_lines, println};
+use crate::utils::terminal::{clear_previous_lines, println, strip_color_from_strings};
 use crate::utils::logs::{validate_log_directory_setup, set_logs_to_string_array};
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
@@ -56,8 +56,10 @@ impl TerminalUserInterface {
         clear_previous_lines(current_height, None);
         self.print();
 
-        // Write current TUI state to log file.
-        set_logs_to_string_array(self.rows.clone());
+        if self.sync_to_log_file_on_update {
+            // Write current TUI state to log file.
+            set_logs_to_string_array(strip_color_from_strings(self.rows.clone()));
+        }
     }
 
     pub fn get_height(&self) -> usize {
