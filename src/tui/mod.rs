@@ -52,6 +52,11 @@ impl TerminalUserInterface {
     // If the total height of the TUI has changed, you'll need to pass `previous_height` in order
     // to keep everything synchronised. If it's the same, passing just `None` is completely fine.
     pub fn rerender(&self, previous_height: Option<usize>) {
+        if self.sync_to_log_file_on_update {
+            // Write current TUI state to log file.
+            set_logs_to_string_array(strip_color_from_strings(self.rows.clone()));
+        }
+
         if !self.is_active { return };
 
         let current_height = self.get_height();
@@ -65,11 +70,6 @@ impl TerminalUserInterface {
 
         clear_previous_lines(current_height, None);
         self.print();
-
-        if self.sync_to_log_file_on_update {
-            // Write current TUI state to log file.
-            set_logs_to_string_array(strip_color_from_strings(self.rows.clone()));
-        }
     }
 
     pub fn get_height(&self) -> usize {

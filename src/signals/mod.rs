@@ -6,6 +6,10 @@ use signal_hook::consts::{SIGINT, SIGTERM, SIGTSTP, SIGCONT};
 use signal_hook::iterator::Signals;
 use std::thread;
 
+fn running_in_foreground() -> bool {
+    unsafe { libc::tcgetpgrp(libc::STDIN_FILENO) == libc::getpgrp() }
+}
+
 fn suspend() {
     logger().log("Suspending...");
     tui().set_is_active(false);
@@ -17,11 +21,14 @@ fn suspend() {
 }
 
 fn resume() {
+    // If started again in background, don't redraw the UI.
+    if !running_in_foreground() { return };
+    
     logger().log("Resuming...");
-
+    
     enable_terminal_alternate_screen_mode();
     enable_terminal_raw_mode();
-
+    
     let mut ui = tui();
     ui.set_is_active(true);
     ui.rerender(None);
