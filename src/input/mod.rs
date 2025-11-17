@@ -5,6 +5,10 @@ use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use std::thread;
 use std::time::Duration;
 
+fn suspend() {
+    unsafe { libc::raise(libc::SIGTSTP); }
+}
+
 pub struct UserInputEvent {
     key: KeyCode,
     modifier: KeyModifiers,
@@ -27,6 +31,22 @@ fn get_handled_events() -> Vec<UserInputEvent> {
             on_trigger: Box::new(|| {
                 logger().log("q");
                 exit();
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('z'),
+            modifier: KeyModifiers::CONTROL,
+            on_trigger: Box::new(|| {
+                logger().log("^Z");
+                suspend();
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('b'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                logger().log("b");
+                suspend();
             }),
         },
     ]

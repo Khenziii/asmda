@@ -13,6 +13,9 @@ use utils::format_new_rows;
 pub struct TerminalUserInterface {
     rows: Vec<String>,
     new_rows_callbacks: Vec<NewRowCallback>,
+    // Whether the table should keep updating. This is turned off for example when the program is
+    // suspended, and we don't want anything writing to stanard output.
+    is_active: bool,
     sync_to_log_file_on_update: bool,
 }
 
@@ -31,6 +34,7 @@ impl TerminalUserInterface {
         TerminalUserInterface {
             rows: Vec::new(),
             new_rows_callbacks: Vec::new(),
+            is_active: true,
             sync_to_log_file_on_update,
         }
     }
@@ -41,9 +45,15 @@ impl TerminalUserInterface {
         }
     }
 
+    pub fn set_is_active(&mut self, new_is_active: bool) {
+        self.is_active = new_is_active;
+    }
+
     // If the total height of the TUI has changed, you'll need to pass `previous_height` in order
     // to keep everything synchronised. If it's the same, passing just `None` is completely fine.
     pub fn rerender(&self, previous_height: Option<usize>) {
+        if !self.is_active { return };
+
         let current_height = self.get_height();
         if let Some(previous_height_raw) = previous_height {
             let height_difference = current_height - previous_height_raw;
