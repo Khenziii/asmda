@@ -1,8 +1,8 @@
+use crate::logger::logger;
 use crate::tui::tui;
 use crate::utils::exit::{disable_terminal_raw_mode, exit, leave_alternate_terminal_screen_mode};
-use crate::logger::logger;
 use crate::utils::startup::{enable_terminal_alternate_screen_mode, enable_terminal_raw_mode};
-use signal_hook::consts::{SIGINT, SIGTERM, SIGTSTP, SIGCONT};
+use signal_hook::consts::{SIGCONT, SIGINT, SIGTERM, SIGTSTP};
 use signal_hook::iterator::Signals;
 use std::thread;
 
@@ -17,18 +17,22 @@ fn suspend() {
     leave_alternate_terminal_screen_mode();
     disable_terminal_raw_mode();
 
-    unsafe { libc::raise(libc::SIGSTOP); }
+    unsafe {
+        libc::raise(libc::SIGSTOP);
+    }
 }
 
 fn resume() {
     // If started again in background, don't redraw the UI.
-    if !running_in_foreground() { return };
-    
+    if !running_in_foreground() {
+        return;
+    };
+
     logger().log("Resuming...");
-    
+
     enable_terminal_alternate_screen_mode();
     enable_terminal_raw_mode();
-    
+
     let mut ui = tui();
     ui.set_is_active(true);
     ui.rerender(None);

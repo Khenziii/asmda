@@ -6,7 +6,9 @@ use std::thread;
 use std::time::Duration;
 
 fn suspend() {
-    unsafe { libc::raise(libc::SIGTSTP); }
+    unsafe {
+        libc::raise(libc::SIGTSTP);
+    }
 }
 
 pub struct UserInputEvent {

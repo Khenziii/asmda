@@ -57,7 +57,9 @@ impl TerminalUserInterface {
             set_logs_to_string_array(strip_color_from_strings(self.rows.clone()));
         }
 
-        if !self.is_active { return };
+        if !self.is_active {
+            return;
+        };
 
         let current_height = self.get_height();
         if let Some(previous_height_raw) = previous_height {
