@@ -3,6 +3,7 @@ use crate::environment::utils::decryption_key_passphrase::decryption_key_passphr
 use crate::environment::utils::generic::{as_boolean, get_running_environment};
 use crate::utils::encryption::Decryptor;
 use crate::utils::multithreading;
+use secrecy::ExposeSecret;
 
 fn default_variable_value_parser(value: String) -> String {
     value.clone().replace("\\n", "\n")
@@ -63,7 +64,7 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
         let key = option_key.expect("Encryption key is not defined, even though `SECRETS_ARE_ENCRYPTED` is set to true. Please configure it and rerun the program");
         let key_passphrase = decryption_key_passphrase().clone().unwrap();
 
-        let decryptor = Decryptor::new(key, key_passphrase).await;
+        let decryptor = Decryptor::new(key, key_passphrase.expose_secret().to_string()).await;
         let decrypted = decryptor.decrypt(value.unwrap()).await;
         value = Some(decrypted);
     }

@@ -3,11 +3,12 @@ use crate::environment::utils::environment::get_env_var_with_potential_fallback;
 use crate::environment::constants::EnvironmentVariable;
 use once_cell::sync::OnceCell;
 use rpassword::read_password;
+use secrecy::SecretString;
 use std::io::{self, Write};
 
-static DECRYPTION_KEY_PASSPHRASE: OnceCell<Option<String>> = OnceCell::new();
+static DECRYPTION_KEY_PASSPHRASE: OnceCell<Option<SecretString>> = OnceCell::new();
 
-pub fn decryption_key_passphrase() -> &'static Option<String> {
+pub fn decryption_key_passphrase() -> &'static Option<SecretString> {
     DECRYPTION_KEY_PASSPHRASE.get_or_init(|| {
         let using_encryption_str =
             get_env_var_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
@@ -29,6 +30,6 @@ pub fn decryption_key_passphrase() -> &'static Option<String> {
                 read_password().expect("Failed to read the password!")
             }
         };
-        Some(key_passphrase)
+        Some(SecretString::new(key_passphrase.into()))
     })
 }
