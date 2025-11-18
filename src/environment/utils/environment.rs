@@ -2,6 +2,8 @@ use crate::environment::constants::{EnvironmentVariable, RunningEnvironment};
 use crate::environment::utils::generic::{as_boolean, get_running_environment};
 use crate::utils::encryption::Decryptor;
 use crate::utils::multithreading;
+use rpassword::read_password;
+use std::io::{self, Write};
 
 pub trait EnvironmentVariableGetterResultParser {
     fn from_result(value: Option<String>, context: EnvironmentVariable) -> Self;
@@ -54,10 +56,22 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
 
     if variable.can_be_encrypted() && using_encryption && value.is_some() && !value_same_as_fallback
     {
-        let key = get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
-        let key_passphrase = get_env_var_by_with_potential_fallback(
+        let option_key: Option<String> = get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
+        let key = option_key.expect("Encryption key is not defined, even though `SECRETS_ARE_ENCRYPTED` is set to true. Please configure it and rerun the program");
+        
+        let option_key_passphrase = get_env_var_by_with_potential_fallback(
             EnvironmentVariable::SecretsDecryptionKeyPassphrase,
         );
+        let key_passphrase = match option_key_passphrase {
+            Some(v) => v,
+            None => {
+                println!("You're using the `SECRETS_ARE_ENCRYPTED` option, but decryption key's passphrase has not yet been defined. Please input it below: ");
+                print!("> ");
+                io::stdout().flush().unwrap();
+
+                read_password().expect("Failed to read the password!")
+            }
+        };
 
         let decryptor = Decryptor::new(key, key_passphrase).await;
         let decrypted = decryptor.decrypt(value.unwrap()).await;
