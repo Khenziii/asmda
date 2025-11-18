@@ -1,5 +1,5 @@
 use crate::environment::utils::generic::as_boolean;
-use crate::environment::utils::environment::get_env_var_by_with_potential_fallback;
+use crate::environment::utils::environment::get_env_var_with_potential_fallback;
 use crate::environment::constants::EnvironmentVariable;
 use once_cell::sync::OnceCell;
 use rpassword::read_password;
@@ -10,13 +10,13 @@ static DECRYPTION_KEY_PASSPHRASE: OnceCell<Option<String>> = OnceCell::new();
 pub fn decryption_key_passphrase() -> &'static Option<String> {
     DECRYPTION_KEY_PASSPHRASE.get_or_init(|| {
         let using_encryption_str =
-            get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
+            get_env_var_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
         let using_encryption = as_boolean(using_encryption_str);
         if !using_encryption {
             return None;
         }
 
-        let option_key_passphrase = get_env_var_by_with_potential_fallback(
+        let option_key_passphrase = get_env_var_with_potential_fallback(
             EnvironmentVariable::SecretsDecryptionKeyPassphrase,
         );
         let key_passphrase = match option_key_passphrase {
