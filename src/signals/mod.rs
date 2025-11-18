@@ -1,7 +1,42 @@
-use crate::utils::exit::exit;
-use signal_hook::consts::{SIGINT, SIGTERM};
+use crate::logger::logger;
+use crate::tui::tui;
+use crate::utils::exit::{disable_terminal_raw_mode, exit, leave_alternate_terminal_screen_mode};
+use crate::utils::startup::{enable_terminal_alternate_screen_mode, enable_terminal_raw_mode};
+use signal_hook::consts::{SIGCONT, SIGINT, SIGTERM, SIGTSTP};
 use signal_hook::iterator::Signals;
 use std::thread;
+
+fn running_in_foreground() -> bool {
+    unsafe { libc::tcgetpgrp(libc::STDIN_FILENO) == libc::getpgrp() }
+}
+
+fn suspend() {
+    logger().log("Suspending...");
+    tui().set_is_active(false);
+
+    leave_alternate_terminal_screen_mode();
+    disable_terminal_raw_mode();
+
+    unsafe {
+        libc::raise(libc::SIGSTOP);
+    }
+}
+
+fn resume() {
+    // If started again in background, don't redraw the UI.
+    if !running_in_foreground() {
+        return;
+    };
+
+    logger().log("Resuming...");
+
+    enable_terminal_alternate_screen_mode();
+    enable_terminal_raw_mode();
+
+    let mut ui = tui();
+    ui.set_is_active(true);
+    ui.rerender(None);
+}
 
 pub struct SignalEvent {
     signal: i32,
@@ -17,6 +52,14 @@ fn get_handled_events() -> Vec<SignalEvent> {
         SignalEvent {
             signal: SIGTERM,
             on_trigger: Box::new(exit),
+        },
+        SignalEvent {
+            signal: SIGTSTP,
+            on_trigger: Box::new(suspend),
+        },
+        SignalEvent {
+            signal: SIGCONT,
+            on_trigger: Box::new(resume),
         },
     ]
 }
