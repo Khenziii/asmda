@@ -1,3 +1,4 @@
+use crate::input::user_input_handler;
 use crate::logger::logger;
 use crate::tui::tui;
 use crate::utils::exit::{disable_terminal_raw_mode, exit, leave_alternate_terminal_screen_mode};
@@ -11,6 +12,9 @@ fn running_in_foreground() -> bool {
 }
 
 fn suspend() {
+    let input_handler = user_input_handler();
+    input_handler.set_is_active(false);
+
     logger().log("Suspending...");
     tui().set_is_active(false);
 
@@ -29,6 +33,9 @@ fn resume() {
     };
 
     logger().log("Resuming...");
+
+    let input_handler = user_input_handler();
+    input_handler.set_is_active(true);
 
     enable_terminal_alternate_screen_mode();
     enable_terminal_raw_mode();

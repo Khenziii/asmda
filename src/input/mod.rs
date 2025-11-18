@@ -1,9 +1,11 @@
 use crate::logger::logger;
 use crate::utils::exit::exit;
-use crossterm::event;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event;
+use once_cell::sync::OnceCell;
 use std::thread;
 use std::time::Duration;
+use std::sync::{Arc, atomic::AtomicBool, atomic::Ordering};
 
 fn suspend() {
     unsafe {
@@ -11,7 +13,7 @@ fn suspend() {
     }
 }
 
-pub struct UserInputEvent {
+struct UserInputEvent {
     key: KeyCode,
     modifier: KeyModifiers,
     on_trigger: Box<dyn Fn()>,
@@ -56,6 +58,7 @@ fn get_handled_events() -> Vec<UserInputEvent> {
 
 pub struct UserInputHandler {
     events_check_frequency: u64,
+    is_active: AtomicBool,
 }
 
 impl Default for UserInputHandler {
@@ -68,11 +71,17 @@ impl UserInputHandler {
     pub fn new() -> Self {
         Self {
             events_check_frequency: 500,
+            is_active: AtomicBool::new(true),
         }
     }
 
-    fn handle_events(&self) {
+    fn handle_events(self: Arc<Self>) {
         loop {
+            if !self.is_active.load(Ordering::SeqCst) {
+                thread::sleep(Duration::from_millis(self.events_check_frequency));
+                continue;
+            }
+
             if event::poll(Duration::from_millis(self.events_check_frequency)).unwrap()
                 && let Event::Key(KeyEvent {
                     code, modifiers, ..
@@ -88,7 +97,22 @@ impl UserInputHandler {
         }
     }
 
-    pub fn run(self) {
-        thread::spawn(move || self.handle_events());
+    pub fn run(self: Arc<Self>) {
+        let cloned_reference = self.clone();
+        thread::spawn(move || cloned_reference.handle_events());
     }
+
+    pub fn set_is_active(self: Arc<Self>, new_value: bool) {
+        self.is_active.store(new_value, Ordering::SeqCst);
+    }
+}
+
+static USER_INPUT_HANDLER: OnceCell<Arc<UserInputHandler>> = OnceCell::new();
+
+pub fn user_input_handler() -> Arc<UserInputHandler> {
+    USER_INPUT_HANDLER.get_or_init(|| {
+        let handler = Arc::new(UserInputHandler::new());
+        handler.clone().run();
+        handler
+    }).clone()
 }
