@@ -1,7 +1,13 @@
 use crate::environment::constants::{EnvironmentVariable, RunningEnvironment};
+use crate::environment::utils::decryption_key_passphrase::decryption_key_passphrase;
 use crate::environment::utils::generic::{as_boolean, get_running_environment};
 use crate::utils::encryption::Decryptor;
 use crate::utils::multithreading;
+use secrecy::ExposeSecret;
+
+fn default_variable_value_parser(value: String) -> String {
+    value.clone().replace("\\n", "\n")
+}
 
 pub trait EnvironmentVariableGetterResultParser {
     fn from_result(value: Option<String>, context: EnvironmentVariable) -> Self;
@@ -10,7 +16,7 @@ pub trait EnvironmentVariableGetterResultParser {
 impl EnvironmentVariableGetterResultParser for String {
     fn from_result(value: Option<String>, context: EnvironmentVariable) -> Self {
         match value {
-            Some(v) => v.replace("\\n", "\n"),
+            Some(v) => default_variable_value_parser(v),
             None if context.is_required() => {
                 panic!("Environment variable {} not set!", context.as_str())
             }
@@ -21,11 +27,11 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        value.map(|v| v.replace("\\n", "\n"))
+        value.map(|v| default_variable_value_parser(v))
     }
 }
 
-fn get_env_var_by_with_potential_fallback<T: EnvironmentVariableGetterResultParser>(
+pub fn get_env_var_with_potential_fallback<T: EnvironmentVariableGetterResultParser>(
     variable: EnvironmentVariable,
 ) -> T {
     let running_environment = get_running_environment();
@@ -46,20 +52,20 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
     variable: EnvironmentVariable,
 ) -> T {
     let using_encryption_str =
-        get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
+        get_env_var_with_potential_fallback(EnvironmentVariable::SecretsAreEncrypted);
     let using_encryption = as_boolean(using_encryption_str);
 
-    let mut value = get_env_var_by_with_potential_fallback::<Option<String>>(variable.clone());
+    let mut value = get_env_var_with_potential_fallback::<Option<String>>(variable.clone());
     let value_same_as_fallback = value == variable.get_development_fallback_value();
 
     if variable.can_be_encrypted() && using_encryption && value.is_some() && !value_same_as_fallback
     {
-        let key = get_env_var_by_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
-        let key_passphrase = get_env_var_by_with_potential_fallback(
-            EnvironmentVariable::SecretsDecryptionKeyPassphrase,
-        );
+        let option_key: Option<String> =
+            get_env_var_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
+        let key = option_key.expect("Encryption key is not defined, even though `SECRETS_ARE_ENCRYPTED` is set to true. Please configure it and rerun the program");
+        let key_passphrase = decryption_key_passphrase().clone().unwrap();
 
-        let decryptor = Decryptor::new(key, key_passphrase).await;
+        let decryptor = Decryptor::new(key, key_passphrase.expose_secret().to_string()).await;
         let decrypted = decryptor.decrypt(value.unwrap()).await;
         value = Some(decrypted);
     }

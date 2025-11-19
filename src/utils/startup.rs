@@ -1,5 +1,5 @@
 use crate::environment;
-use crate::input::UserInputHandler;
+use crate::input::user_input_handler;
 use crate::logger::logger;
 use crate::signals::SignalsHandler;
 use crate::utils::tests::is_test_environment;
@@ -34,8 +34,7 @@ pub fn enable_terminal_raw_mode() {
 }
 
 pub fn setup_user_event_loop() {
-    let handler = UserInputHandler::new();
-    handler.run();
+    user_input_handler();
 }
 
 pub fn setup_signals_event_loop() {

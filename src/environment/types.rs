@@ -1,4 +1,5 @@
 pub use crate::environment::constants::RunningEnvironment;
+use secrecy::SecretString;
 
 #[derive(Debug)]
 pub struct Metadata {
@@ -29,7 +30,7 @@ pub struct SecretsEnvironment {
     // be decrypted for you.
     pub are_encrypted: bool,
     pub decryption_key: Option<String>,
-    pub decryption_key_passphrase: Option<String>,
+    pub decryption_key_passphrase: Option<SecretString>,
 }
 
 #[derive(Debug)]
