@@ -1,11 +1,11 @@
 use crate::logger::logger;
 use crate::utils::exit::exit;
-use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use crossterm::event;
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use once_cell::sync::OnceCell;
+use std::sync::{Arc, atomic::AtomicBool, atomic::Ordering};
 use std::thread;
 use std::time::Duration;
-use std::sync::{Arc, atomic::AtomicBool, atomic::Ordering};
 
 fn suspend() {
     unsafe {
@@ -110,9 +110,11 @@ impl UserInputHandler {
 static USER_INPUT_HANDLER: OnceCell<Arc<UserInputHandler>> = OnceCell::new();
 
 pub fn user_input_handler() -> Arc<UserInputHandler> {
-    USER_INPUT_HANDLER.get_or_init(|| {
-        let handler = Arc::new(UserInputHandler::new());
-        handler.clone().run();
-        handler
-    }).clone()
+    USER_INPUT_HANDLER
+        .get_or_init(|| {
+            let handler = Arc::new(UserInputHandler::new());
+            handler.clone().run();
+            handler
+        })
+        .clone()
 }

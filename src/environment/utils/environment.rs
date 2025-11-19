@@ -60,7 +60,8 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
 
     if variable.can_be_encrypted() && using_encryption && value.is_some() && !value_same_as_fallback
     {
-        let option_key: Option<String> = get_env_var_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
+        let option_key: Option<String> =
+            get_env_var_with_potential_fallback(EnvironmentVariable::SecretsDecryptionKey);
         let key = option_key.expect("Encryption key is not defined, even though `SECRETS_ARE_ENCRYPTED` is set to true. Please configure it and rerun the program");
         let key_passphrase = decryption_key_passphrase().clone().unwrap();
 

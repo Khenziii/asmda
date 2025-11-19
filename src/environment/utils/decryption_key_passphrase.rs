@@ -1,6 +1,6 @@
-use crate::environment::utils::generic::as_boolean;
-use crate::environment::utils::environment::get_env_var_with_potential_fallback;
 use crate::environment::constants::EnvironmentVariable;
+use crate::environment::utils::environment::get_env_var_with_potential_fallback;
+use crate::environment::utils::generic::as_boolean;
 use once_cell::sync::OnceCell;
 use rpassword::read_password;
 use secrecy::SecretString;
