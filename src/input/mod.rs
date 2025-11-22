@@ -1,5 +1,6 @@
 use crate::logger::logger;
 use crate::utils::exit::exit;
+use crate::utils::constants::LOCAL_POLLING_RATE_MS;
 use crossterm::event;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use once_cell::sync::OnceCell;
@@ -70,7 +71,7 @@ impl Default for UserInputHandler {
 impl UserInputHandler {
     pub fn new() -> Self {
         Self {
-            events_check_frequency: 500,
+            events_check_frequency: LOCAL_POLLING_RATE_MS,
             is_active: AtomicBool::new(true),
         }
     }
