@@ -13,6 +13,7 @@ pub struct Metadata {
 pub struct LetterboxdEnvironment {
     pub password: String,
     pub username: String,
+    pub backup_frequency: u64,
 }
 
 #[derive(Debug)]

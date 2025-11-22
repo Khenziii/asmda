@@ -9,6 +9,7 @@ pub enum RunningEnvironment {
 pub enum EnvironmentVariable {
     LetterboxdPassword,
     LetterboxdUsername,
+    LetterboxdBackupFrequency,
     S3Region,
     S3Url,
     S3BucketName,
@@ -25,6 +26,7 @@ impl EnvironmentVariable {
         let str = match self {
             Self::LetterboxdPassword => "LETTERBOXD_PASSWORD",
             Self::LetterboxdUsername => "LETTERBOXD_USERNAME",
+            Self::LetterboxdBackupFrequency => "LETTERBOXD_BACKUP_FREQUENCY",
             Self::S3Region => "S3_REGION",
             Self::S3Url => "S3_URL",
             Self::S3BucketName => "S3_BUCKET_NAME",
@@ -42,6 +44,7 @@ impl EnvironmentVariable {
         match self {
             Self::LetterboxdPassword => true,
             Self::LetterboxdUsername => false,
+            Self::LetterboxdBackupFrequency => false,
             Self::S3Region => false,
             Self::S3Url => false,
             Self::S3BucketName => false,
@@ -57,6 +60,7 @@ impl EnvironmentVariable {
         let value = match self {
             Self::LetterboxdPassword => None,
             Self::LetterboxdUsername => None,
+            Self::LetterboxdBackupFrequency => Some("60"),
             Self::S3Region => Some("eu-central-1"),
             Self::S3Url => Some("http://localhost:9000"),
             Self::S3BucketName => Some("backups"),

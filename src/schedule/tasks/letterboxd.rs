@@ -1,6 +1,8 @@
+use crate::api_wrappers::s3::utils::get_backup_path_for_archiver;
 use crate::api_wrappers::s3::S3Client;
 use crate::archivers::letterboxd::LetterboxdArchiver;
-use crate::archivers::{Archiver, InstantArchiver};
+use crate::archivers::InstantArchiver;
+use crate::environment::environment;
 use crate::schedule::tasks::Task;
 use crate::schedule::tasks::utils::types::TaskConfig;
 use crate::utils::constants::ArchiverIdentificator;
@@ -14,7 +16,7 @@ async fn callback() {
 
     let s3 = S3Client::new().await;
     s3.upload(
-        &letterboxd_archiver.get_identificator().as_str(),
+        &get_backup_path_for_archiver(letterboxd_archiver),
         "backup.zip",
         data,
     )
@@ -23,6 +25,6 @@ async fn callback() {
 
 init_new_task!(TaskConfig {
     callback: task_callback!(callback),
-    run_interval_seconds: 60,
+    run_interval_seconds: environment().letterboxd.backup_frequency,
     app_name: ArchiverIdentificator::Letterboxd,
 });
