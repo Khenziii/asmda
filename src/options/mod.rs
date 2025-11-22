@@ -1,5 +1,6 @@
 pub mod run;
 pub mod logs;
+pub mod help;
 
 use crate::utils::types::AsyncFn;
 use std::env;
@@ -7,6 +8,7 @@ use std::env;
 pub struct CommandOption {
     string_identifiers: Vec<String>,
     callback: AsyncFn,
+    description: String,
 }
 
 pub struct OptionsHandler {
@@ -21,7 +23,10 @@ impl Default for OptionsHandler {
 
 impl OptionsHandler {
     pub fn new() -> Self {
-        let options: Vec<CommandOption> = vec![run::get_option(), logs::get_option()];
+        let mut options: Vec<CommandOption> = vec![run::get_option(), logs::get_option()];
+        let help_option = help::get_option(&options);
+        options.push(help_option);
+
         OptionsHandler { options }
     }
 
