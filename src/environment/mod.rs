@@ -9,7 +9,7 @@ use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, Secrets
 use utils::decryption_key_passphrase::decryption_key_passphrase;
 use utils::environment::get_env_var;
 use utils::generic::{
-    as_boolean, get_database_path, get_logs_directory_path, get_running_environment,
+    as_boolean, get_database_path, get_logs_directory_path, get_running_environment, get_program_version
 };
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
@@ -22,6 +22,7 @@ pub fn environment() -> &'static Environment {
                 database_path: get_database_path(),
                 running_environment: get_running_environment(),
                 logs_directory_path: get_logs_directory_path(),
+                program_version: get_program_version(),
             },
             letterboxd: LetterboxdEnvironment {
                 password: get_env_var(LetterboxdPassword),

@@ -6,6 +6,7 @@ pub struct Metadata {
     pub running_environment: RunningEnvironment,
     pub database_path: String,
     pub logs_directory_path: String,
+    pub program_version: String,
 }
 
 #[derive(Debug)]

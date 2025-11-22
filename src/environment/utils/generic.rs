@@ -44,3 +44,7 @@ pub fn get_logs_directory_path() -> String {
         String::from("./logs")
     }
 }
+
+pub fn get_program_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
