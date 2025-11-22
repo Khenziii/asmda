@@ -1,13 +1,17 @@
 use super::CommandOption;
 use crate::utils::types::AsyncOutput;
+use crate::environment::environment;
 
 static HELP_MESSAGE_HEADER: &str = "
 Usage:
 $ asmda [option]
 ";
 
-static HELP_MESSAGE_FOOTER: &str = "
-ASMDA by Khenzii <khenzii@khenzii.dev>
+fn get_help_message_footer() -> String {
+    format!("\n\nASMDA v{} by Khenzii <khenzii@khenzii.dev>", environment().metadata.program_version)
+}
+
+static HELP_MESSAGE_END: &str = "
 https://asmda.khenzii.dev
 ";
 
@@ -26,7 +30,7 @@ pub fn get_option(context: &Vec<CommandOption>) -> CommandOption {
         .map(|option| format_option_to_string(&option.string_identifiers, &option.description))
         .collect();
     options_string.push(format_option_to_string(&self_string_identifiers, &self_description));
-    let help_message = format!("{}\n{}\n{}", HELP_MESSAGE_HEADER.trim_start(), options_string.join("\n"), HELP_MESSAGE_FOOTER.trim_end());
+    let help_message = format!("{}{}{}{}", HELP_MESSAGE_HEADER.trim_start(), format!("\n{}", options_string.join("\n")), get_help_message_footer(), HELP_MESSAGE_END.trim_end());
     
     let callback = Box::new(move || {
         let value = help_message.clone();
