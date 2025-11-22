@@ -6,7 +6,7 @@ use super::CommandOption;
 use std::thread;
 
 async fn callback() {
-    setup_tui();
+    setup_tui(None);
     logger().log("Starting up...");
     startup();
 

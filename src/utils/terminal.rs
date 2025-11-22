@@ -1,6 +1,6 @@
 use crate::tui;
 use crate::tui::TerminalUserInterface;
-use crate::tui::table::utils::setup_tasks_table_in_tui;
+use crate::tui::table::utils::{setup_tasks_table_in_tui, TableTasksDataGetter};
 use crate::tui::table::{Table, tasks_table::table::TasksTable};
 use crossterm::{ExecutableCommand, cursor, terminal};
 use std::io::{Stdout, stdout};
@@ -65,10 +65,10 @@ where
     add_table_to_tui(table, tui, true);
 }
 
-pub fn setup_tui() {
+pub fn setup_tui(tasks_getter: TableTasksDataGetter) {
     let table = Arc::new(Mutex::new(TasksTable::new()));
 
-    setup_tasks_table_in_tui(Arc::clone(&table));
+    setup_tasks_table_in_tui(Arc::clone(&table), tasks_getter);
     let mut tui = tui::tui();
 
     // Reorders rows after adding them.
@@ -98,8 +98,10 @@ pub fn setup_tui() {
 mod tests {
     mod terminal {
         use super::super::*;
-        use crate::logger;
+        use crate::logger::logger;
+        use crate::schedule::tasks;
         use crate::tui::tui;
+        use crate::tui::table::utils::convert_tasks_to_thread_safe_task_data;
         use colored::Colorize;
         use serial_test::serial;
 
@@ -120,7 +122,10 @@ mod tests {
         fn default_tui_setup_works() {
             logger().reinitialize();
             tui().reinitialize();
-            setup_tui();
+            setup_tui(Some(Arc::new(Box::new(|| {
+                let tasks = vec![tasks::letterboxd::get_task()];
+                convert_tasks_to_thread_safe_task_data(tasks)
+            }))));
             logger().log_without_date("Starting up...");
 
             let output = strip_color_from_strings(tui().get_rows());

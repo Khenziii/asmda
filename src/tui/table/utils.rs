@@ -60,7 +60,12 @@ fn add_initial_table_padding(table: Arc<Mutex<TasksTable>>) {
     }
 }
 
-pub fn setup_tasks_table_in_tui(table: Arc<Mutex<TasksTable>>) {
+pub type TableTasksDataGetter = Option<Arc<Box<dyn Fn() -> Vec<ThreadSafeTaskData> + Send + Sync>>>;
+
+pub fn setup_tasks_table_in_tui(
+    table: Arc<Mutex<TasksTable>>,
+    get_tasks_data: TableTasksDataGetter,
+) {
     add_initial_table_padding(table.clone());
 
     thread::spawn(move || {
@@ -68,10 +73,15 @@ pub fn setup_tasks_table_in_tui(table: Arc<Mutex<TasksTable>>) {
             {
                 let mut tui = tui::tui();
                 let mut locked_table = table.lock().unwrap();
-                let tasks = get_all_tasks();
-                let thread_safe_task_data = convert_tasks_to_thread_safe_task_data(tasks);
+                let thread_safe_tasks_data = match get_tasks_data.clone() {
+                    Some(f) => f(),
+                    None => {
+                        let tasks = get_all_tasks();
+                        convert_tasks_to_thread_safe_task_data(tasks)
+                    }
+                };
 
-                refresh_tasks_table(thread_safe_task_data.clone(), &mut locked_table, &mut tui);
+                refresh_tasks_table(thread_safe_tasks_data.clone(), &mut locked_table, &mut tui);
             }
 
             thread::sleep(Duration::from_secs(1));

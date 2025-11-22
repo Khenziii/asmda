@@ -1,4 +1,4 @@
-mod letterboxd;
+pub mod letterboxd;
 pub mod utils;
 
 use crate::api_wrappers::database::DatabaseClient;
