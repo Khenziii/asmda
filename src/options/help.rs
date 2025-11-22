@@ -15,6 +15,8 @@ fn format_option_to_string(string_identifiers: &Vec<String>, description: &Strin
     format!("{} - {}", string_identifiers.join("/"), description)
 }
 
+// The `init_command_option!` macro is not used here, contrary to other options, as we're adding
+// custom logic to values used to construct the `CommandOption` object.
 pub fn get_option(context: &Vec<CommandOption>) -> CommandOption {
     let self_string_identifiers = vec![String::from("-h"), String::from("--help")];
     let self_description = String::from("Shows this message.");

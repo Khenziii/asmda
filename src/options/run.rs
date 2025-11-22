@@ -1,3 +1,4 @@
+use crate::init_command_option;
 use crate::logger::logger;
 use crate::schedule::Scheduler;
 use crate::utils::{startup::startup, terminal::setup_tui};
@@ -15,10 +16,8 @@ async fn callback() {
     thread::park();
 }
 
-pub fn get_option() -> CommandOption {
-    CommandOption {
-        string_identifiers: vec![String::from("run")],
-        callback: Box::new(|| Box::pin(callback())),
-        description: String::from("Starts the program. This option can be omitted (just `$ asmda` works fine too), but is still included as it looks more readable in some scenarios."),
-    }
-}
+init_command_option!(
+    vec!["run"],
+    "Starts the program. This option can be omitted (just `$ asmda` works fine too), but is still included as it looks more readable in some scenarios.",
+    callback
+);

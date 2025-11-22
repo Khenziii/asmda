@@ -2,6 +2,7 @@ pub mod run;
 pub mod logs;
 pub mod help;
 pub mod version;
+pub mod macros;
 
 use crate::utils::types::AsyncFn;
 use std::env;
