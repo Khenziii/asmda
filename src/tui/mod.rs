@@ -4,6 +4,7 @@ pub mod utils;
 
 use crate::utils::logs::{set_logs_to_string_array, validate_log_directory_setup};
 use crate::utils::terminal::{clear_previous_lines, println, strip_color_from_strings};
+use crossterm::terminal::size;
 use once_cell::sync::OnceCell;
 use std::sync::{Mutex, MutexGuard};
 use types::NewRowCallback;
@@ -161,6 +162,15 @@ impl TerminalUserInterface {
     }
 
     pub fn set_current_cursor_offset(&mut self, new_cursor_offset: i64) {
+        // Tried to scroll too far down.
+        if new_cursor_offset > 0 { return };
+        // Tried to scroll too far up.
+        let rows_in_terminal = match size() {
+            Ok((_, rows)) => rows - 1,
+            Err(_) => 50,
+        };
+        if (-new_cursor_offset) as usize > self.get_height() - rows_in_terminal as usize { return };
+
         let old_cursor_offset = self.current_cursor_offset;
         self.current_cursor_offset = new_cursor_offset;
         let height_including_scroll = self.calculate_height_including_scroll(self.get_height(), old_cursor_offset);
