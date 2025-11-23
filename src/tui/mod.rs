@@ -162,13 +162,15 @@ impl TerminalUserInterface {
     }
 
     pub fn set_current_cursor_offset(&mut self, new_cursor_offset: i64) {
-        // Tried to scroll too far down.
-        if new_cursor_offset > 0 { return };
-        // Tried to scroll too far up.
         let rows_in_terminal = match size() {
             Ok((_, rows)) => rows - 1,
             Err(_) => 50,
         };
+        // There's nothing to scroll to.
+        if self.get_height() <= rows_in_terminal as usize { return };
+        // Tried to scroll too far down.
+        if new_cursor_offset > 0 { return };
+        // Tried to scroll too far up.
         if (-new_cursor_offset) as usize > self.get_height() - rows_in_terminal as usize { return };
 
         let old_cursor_offset = self.current_cursor_offset;
