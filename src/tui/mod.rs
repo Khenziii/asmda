@@ -9,6 +9,21 @@ use std::sync::{Mutex, MutexGuard};
 use types::NewRowCallback;
 use utils::format_new_rows;
 
+fn remove_last_entry_from_vector<T>(vector: &mut Vec<T>) {
+    let current_amount_of_entries = vector.len();
+    if current_amount_of_entries > 0 {
+        vector.truncate(current_amount_of_entries - 1);
+    } else {
+        vector.clear();
+    }
+}
+
+fn remove_last_entries_from_vector<T>(vector: &mut Vec<T>, amount: usize) {
+    for _ in 0..amount {
+        remove_last_entry_from_vector(vector);
+    }
+}
+
 #[derive(Clone)]
 pub struct TerminalUserInterface {
     rows: Vec<String>,
@@ -17,6 +32,10 @@ pub struct TerminalUserInterface {
     // suspended, and we don't want anything writing to stanard output.
     is_active: bool,
     sync_to_log_file_on_update: bool,
+    // If positive, user is viewing logs while being further to the bottom than the last line.
+    // If negative, the user has scrolled top. This value represents the amount of lines that
+    // have been scrolled.
+    current_cursor_offset: i64,
 }
 
 impl Default for TerminalUserInterface {
@@ -35,12 +54,23 @@ impl TerminalUserInterface {
             rows: Vec::new(),
             new_rows_callbacks: Vec::new(),
             is_active: true,
+            current_cursor_offset: 0,
             sync_to_log_file_on_update,
         }
     }
 
     fn print(&self) {
-        for row in &self.rows {
+        let mut rows = self.rows.clone();
+
+        if self.current_cursor_offset > 0 {
+            for _ in 0..self.current_cursor_offset {
+                rows.push(String::from(""));
+            }
+        } else {
+            remove_last_entries_from_vector(&mut rows, (-self.current_cursor_offset).max(0) as usize);
+        }
+
+        for row in &rows {
             println(row);
         }
     }
@@ -59,11 +89,11 @@ impl TerminalUserInterface {
 
         if !self.is_active {
             return;
-        };
+        }
 
-        let current_height = self.get_height();
+        let current_height = self.calculate_height_including_scroll(self.get_height(), self.current_cursor_offset);
         if let Some(previous_height_raw) = previous_height {
-            let height_difference = current_height - previous_height_raw;
+            let height_difference = current_height.checked_sub(previous_height_raw).unwrap_or(0);
 
             for _ in 0..height_difference {
                 println("");
@@ -76,6 +106,10 @@ impl TerminalUserInterface {
 
     pub fn get_height(&self) -> usize {
         self.rows.len()
+    }
+
+    fn calculate_height_including_scroll(&self, tui_height: usize, cursor_offset: i64) -> usize {
+        (tui_height as isize + cursor_offset as isize).max(0) as usize
     }
 
     pub fn add_rows(&mut self, new_rows: Vec<String>, trigger_callbacks: bool, render: bool) {
@@ -92,7 +126,8 @@ impl TerminalUserInterface {
         }
 
         if render {
-            self.rerender(Some(current_tui_height));
+            let height_including_scroll = self.calculate_height_including_scroll(current_tui_height, self.current_cursor_offset);
+            self.rerender(Some(height_including_scroll));
         }
     }
 
@@ -106,18 +141,11 @@ impl TerminalUserInterface {
     }
 
     pub fn remove_last_row(&mut self) {
-        let current_amount_of_rows = self.get_height();
-        if current_amount_of_rows > 0 {
-            self.rows.truncate(current_amount_of_rows - 1);
-        } else {
-            self.rows.clear();
-        }
+        remove_last_entry_from_vector(&mut self.rows);
     }
 
     pub fn remove_last_rows(&mut self, amount: usize) {
-        for _ in 0..amount {
-            self.remove_last_row();
-        }
+        remove_last_entries_from_vector(&mut self.rows, amount);
     }
 
     pub fn get_rows(&self) -> Vec<String> {
@@ -126,6 +154,17 @@ impl TerminalUserInterface {
 
     pub fn reinitialize(&mut self) {
         *self = TerminalUserInterface::new(self.sync_to_log_file_on_update);
+    }
+
+    pub fn get_current_cursor_offset(&self) -> i64 {
+        self.current_cursor_offset
+    }
+
+    pub fn set_current_cursor_offset(&mut self, new_cursor_offset: i64) {
+        let old_cursor_offset = self.current_cursor_offset;
+        self.current_cursor_offset = new_cursor_offset;
+        let height_including_scroll = self.calculate_height_including_scroll(self.get_height(), old_cursor_offset);
+        self.rerender(Some(height_including_scroll));
     }
 }
 

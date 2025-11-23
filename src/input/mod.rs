@@ -1,4 +1,5 @@
 use crate::logger::logger;
+use crate::tui::tui;
 use crate::utils::exit::exit;
 use crate::utils::constants::LOCAL_POLLING_RATE_MS;
 use crossterm::event;
@@ -52,6 +53,26 @@ fn get_handled_events() -> Vec<UserInputEvent> {
             on_trigger: Box::new(|| {
                 logger().log("b");
                 suspend();
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('j'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                let current_cursor_offset = ui.get_current_cursor_offset();
+
+                ui.set_current_cursor_offset(current_cursor_offset + 1);
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('k'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                let current_cursor_offset = ui.get_current_cursor_offset();
+
+                ui.set_current_cursor_offset(current_cursor_offset - 1);
             }),
         },
     ]
