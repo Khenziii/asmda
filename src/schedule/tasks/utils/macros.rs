@@ -6,6 +6,7 @@ macro_rules! init_new_task {
                 Duration::from_secs($config.run_interval_seconds),
                 Mutex::new($config.callback),
                 $config.app_name,
+                $config.is_enabled,
             )
         }
     };
@@ -16,6 +17,7 @@ macro_rules! init_new_task {
                 Duration::from_secs($config.run_interval_seconds),
                 Mutex::new($config.callback),
                 $config.app_name,
+                $config.is_enabled,
             )
         }
     };

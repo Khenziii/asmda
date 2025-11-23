@@ -28,6 +28,7 @@ pub fn environment() -> &'static Environment {
                 password: get_env_var(LetterboxdPassword),
                 username: get_env_var(LetterboxdUsername),
                 backup_frequency: as_integer(get_env_var(LetterboxdBackupFrequency)),
+                backup_enable: as_boolean(get_env_var(LetterboxdBackupEnable))
             },
             s3: S3Environment {
                 region: get_env_var(S3Region),

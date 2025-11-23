@@ -1,8 +1,8 @@
 pub mod tasks;
 
 use crate::logger::logger;
+use tasks::{Task, get_enabled_tasks};
 use std::mem::take;
-use tasks::{Task, get_all_tasks};
 
 pub struct Scheduler {
     tasks: Vec<Task>,
@@ -13,7 +13,7 @@ impl Scheduler {
     pub fn new(tasks_arg: Option<Vec<Task>>) -> Self {
         let tasks = match tasks_arg {
             Some(tasks_arg) => tasks_arg,
-            None => get_all_tasks(),
+            None => get_enabled_tasks(),
         };
 
         Self { tasks }

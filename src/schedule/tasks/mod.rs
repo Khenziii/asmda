@@ -12,6 +12,7 @@ pub struct Task {
     callback: ThreadCallback,
     app_name: ArchiverIdentificator,
     database: DatabaseClient,
+    is_enabled: bool,
 }
 
 impl Task {
@@ -19,6 +20,7 @@ impl Task {
         interval: Duration,
         callback: ThreadCallback,
         app_name: ArchiverIdentificator,
+        is_enabled: bool,
     ) -> Self {
         let database = DatabaseClient::new();
         let next_run = database.get_next_run_by_app_name(app_name.clone());
@@ -29,6 +31,7 @@ impl Task {
             app_name,
             database,
             next_run,
+            is_enabled,
         }
     }
 
@@ -60,4 +63,9 @@ impl Task {
 
 pub fn get_all_tasks() -> Vec<Task> {
     vec![letterboxd::get_task()]
+}
+
+pub fn get_enabled_tasks() -> Vec<Task> {
+    let tasks = get_all_tasks();
+    tasks.into_iter().filter(|task| task.is_enabled).collect()
 }

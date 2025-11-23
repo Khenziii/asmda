@@ -27,4 +27,5 @@ init_new_task!(TaskConfig {
     callback: task_callback!(callback),
     run_interval_seconds: environment().letterboxd.backup_frequency,
     app_name: ArchiverIdentificator::Letterboxd,
+    is_enabled: environment().letterboxd.backup_enable,
 });

@@ -14,6 +14,7 @@ pub struct LetterboxdEnvironment {
     pub password: String,
     pub username: String,
     pub backup_frequency: u64,
+    pub backup_enable: bool,
 }
 
 #[derive(Debug)]
