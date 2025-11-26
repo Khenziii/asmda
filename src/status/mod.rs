@@ -20,10 +20,10 @@ async fn status_handler(server: Arc<StatusServer>, _: Request<impl hyper::body::
     let error_unlocked = server.error_message.lock().unwrap();
     let error = (*error_unlocked).clone();
 
-    let response = if error.is_none() {
-        construct_response(StatusCode::OK, "Everything's fine!".to_string())
+    let response = if let Some(err) = error {
+        construct_response(StatusCode::INTERNAL_SERVER_ERROR, err)
     } else {
-        construct_response(StatusCode::INTERNAL_SERVER_ERROR, error.unwrap())
+        construct_response(StatusCode::OK, "Everything's fine!".to_string())
     };
     Ok(response)
 }
@@ -31,6 +31,12 @@ async fn status_handler(server: Arc<StatusServer>, _: Request<impl hyper::body::
 pub struct StatusServer {
     address: SocketAddr,
     error_message: Mutex<Option<String>>,
+}
+
+impl Default for StatusServer {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl StatusServer {
@@ -43,7 +49,7 @@ impl StatusServer {
     }
 
     pub async fn start_blocking(self: Arc<Self>) {
-        let listener = TcpListener::bind(self.address).await.expect(&format!("Failed to start the StatusServer on address {}", self.address));
+        let listener = TcpListener::bind(self.address).await.unwrap_or_else(|_| panic!("Failed to start the StatusServer on address {}", self.address));
 
         loop {
             let (tcp, _) = listener.accept().await.expect("Failed to accept a TCP connection!");

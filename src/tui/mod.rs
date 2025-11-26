@@ -94,7 +94,7 @@ impl TerminalUserInterface {
 
         let current_height = self.calculate_height_including_scroll(self.get_height(), self.current_cursor_offset);
         if let Some(previous_height_raw) = previous_height {
-            let height_difference = current_height.checked_sub(previous_height_raw).unwrap_or(0);
+            let height_difference = current_height.saturating_sub(previous_height_raw);
 
             for _ in 0..height_difference {
                 println("");

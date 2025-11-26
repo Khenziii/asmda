@@ -15,13 +15,13 @@ static HELP_MESSAGE_END: &str = "
 https://asmda.khenzii.dev
 ";
 
-fn format_option_to_string(string_identifiers: &Vec<String>, description: &String) -> String {
+fn format_option_to_string(string_identifiers: &[String], description: &String) -> String {
     format!("{} - {}", string_identifiers.join("/"), description)
 }
 
 // The `init_command_option!` macro is not used here, contrary to other options, as we're adding
 // custom logic to values used to construct the `CommandOption` object.
-pub fn get_option(context: &Vec<CommandOption>) -> CommandOption {
+pub fn get_option(context: &[CommandOption]) -> CommandOption {
     let self_string_identifiers = vec![String::from("-h"), String::from("--help")];
     let self_description = String::from("Shows this message.");
 
@@ -30,7 +30,8 @@ pub fn get_option(context: &Vec<CommandOption>) -> CommandOption {
         .map(|option| format_option_to_string(&option.string_identifiers, &option.description))
         .collect();
     options_string.push(format_option_to_string(&self_string_identifiers, &self_description));
-    let help_message = format!("{}{}{}{}", HELP_MESSAGE_HEADER.trim_start(), format!("\n{}", options_string.join("\n")), get_help_message_footer(), HELP_MESSAGE_END.trim_end());
+    let options_help_part = format!("\n{}", options_string.join("\n"));
+    let help_message = format!("{}{}{}{}", HELP_MESSAGE_HEADER.trim_start(), options_help_part, get_help_message_footer(), HELP_MESSAGE_END.trim_end());
     
     let callback = Box::new(move || {
         let value = help_message.clone();

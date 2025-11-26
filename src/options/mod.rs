@@ -44,7 +44,7 @@ impl OptionsHandler {
 
         let passed_string = args[1].clone();
         for supported_option in &self.options {
-            if !supported_option.string_identifiers.iter().any(|v| *v == passed_string) { continue };
+            if !supported_option.string_identifiers.contains(&passed_string) { continue };
 
             let handler = &supported_option.callback;
             handler().await;

@@ -26,19 +26,17 @@ pub fn ask_for_multiline_armored_string() -> String {
     let mut index = 0;
 
     loop {
-        let line;
-        if index == 0 {
-            line = ask_for_string();
+        let line = if index == 0 {
+            ask_for_string()
         } else {
-            line = ask_for_string_without_prompt();
-        }
+            ask_for_string_without_prompt()
+        };
 
-        let previous_line_was_armor;
-        if index == 0 {
-            previous_line_was_armor = false;
+        let previous_line_was_armor = if index == 0 {
+            false
         } else {
-            previous_line_was_armor = result[index - 1].starts_with("-----");
-        }
+            result[index - 1].starts_with("-----")
+        };
         
         if line.trim_end().is_empty() && !previous_line_was_armor {
             break;
@@ -57,7 +55,7 @@ pub fn ask_for_variable_name() -> String {
 
     let all_environment_variables: Vec<EnvironmentVariable> = EnvironmentVariable::iter().collect();
     for environment_variable in all_environment_variables {
-        if !(variable_name.trim() == environment_variable.as_str()) {
+        if variable_name.trim() != environment_variable.as_str() {
             continue;
         }
 

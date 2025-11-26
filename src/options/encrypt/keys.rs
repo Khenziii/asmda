@@ -10,11 +10,10 @@ pub fn get_key_string_by_path() -> String {
     let mut path = ask_for_string();
     path = path.trim().to_string();
 
-    let key_string = fs::read_to_string(path).unwrap_or_else(|_| {
+    fs::read_to_string(path).unwrap_or_else(|_| {
         println!("Passed invalid path! Couldn't read it. Please try again.");
         get_key_string_by_path()
-    });
-    key_string
+    })
 }
 
 pub fn check_if_passphrase_matches_key(key: &mut SignedSecretKey, passphrase: String) -> bool {
@@ -39,7 +38,7 @@ pub async fn generate_key_pair() -> SignedSecretKey {
         let passphrase_string = ask_for_string();
         let passphrase = passphrase_string.trim();
     
-        if passphrase.len() == 0 {
+        if passphrase.is_empty() {
             println!("Key's passphrase can't be empty! Try again.");
             continue;
         }
@@ -48,7 +47,7 @@ pub async fn generate_key_pair() -> SignedSecretKey {
         let email_string = ask_for_string();
         let mut email = email_string.trim();
 
-        if email == "" {
+        if email.is_empty() {
             email = "email@domain.com";
         }
     
@@ -93,13 +92,13 @@ pub async fn ask_for_key() -> SignedSecretKey {
             },
             "4" => {
                 println!("If you'll encounter any issues with the first 2 options, you can always define the secrets manually. Here are the steps in order which will help you to do so:");
-                println!("");
+                println!();
                 println!("```shell");
                 println!("$ gpg --full-generate-key # Generates a new key pair. Make sure to choose the \"RSA and RSA\" option.");
                 println!("$ gpg --list-secret-keys --keyid-format LONG # Spot your key, and grab the long ID near the \"sec\" section.");
                 println!("$ gpg -a --export-secret-keys [KEY_ID] > key.asc # Export your key and copy its content.");
                 println!("```");
-                println!("");
+                println!();
                 println!("Now that you have your key created and exported, you should let ASMDA know about it. To do this, define `SECRETS_DECRYPTION_KEY` and `SECRETS_DECRYPTION_KEY_PASSPHRASE` environment variables. Using those values, the program decrypts every other encrypted variable.");
                 println!("IMPORTANT: Before you do that however, please note that all environment variables must span only a single line. This is why you should replace all newline characters with `\\n` (ASMDA is expecting this and will reconstruct the actual values). In order to do this, you can paste the values spanning multiple lines (such as `SECRETS_DECRYPTION_KEY` and all other encrypted secrets) below. Please note, that the string should be unformatted (*don't sanitize it if your terminal asks you*) and that you'll need to click enter a couple of times.");
 
@@ -108,7 +107,7 @@ pub async fn ask_for_key() -> SignedSecretKey {
                 let formatted_value = format_armored_value(value);
 
                 println!("{}", formatted_value);
-                println!("");
+                println!();
                 println!("Done! You can now use your value for defining armored environment variables.");
 
                 exit();

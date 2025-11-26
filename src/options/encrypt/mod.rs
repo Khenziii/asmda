@@ -17,11 +17,8 @@ async fn callback() {
     let environment_key = config.secrets.decryption_key.clone();
     let environment_key_passphrase = config.secrets.decryption_key_passphrase.clone();
 
-    let mut key;
-    if environment_key.is_none() {
-        key = ask_for_key().await;
-    } else {
-        key = match read_skey_from_string(environment_key.unwrap()).await {
+    let mut key = if let Some(value) = environment_key {
+        match read_skey_from_string(value).await {
             Ok(v) => v,
             Err(_) => {
                 println!("Invalid key is set in the environment file. Please delete it (`SECRETS_DECRYPTION_KEY`) and rerun this command.");
@@ -29,7 +26,9 @@ async fn callback() {
                 unreachable!();
             },
         }
-    }
+    } else {
+        ask_for_key().await
+    };
 
     let key_passphrase: String;
     if environment_key_passphrase.is_none() {

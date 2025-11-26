@@ -27,7 +27,7 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        value.map(|v| default_variable_value_parser(v))
+        value.map(default_variable_value_parser)
     }
 }
 

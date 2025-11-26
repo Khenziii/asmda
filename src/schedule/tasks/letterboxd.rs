@@ -16,19 +16,19 @@ async fn callback() {
     let letterboxd_archiver = LetterboxdArchiver {};
     let data = letterboxd_archiver.get_data().await;
 
-    if data.is_ok() {
+    if let Err(error) = data {
+        let error_message = error.to_string();
+        logger().error(&error_message);
+
+        let new_status = Some("Failed to archive Letterboxd!".to_string());
+        status_server().set_error_message(new_status);
+    } else {
         let s3 = S3Client::new().await;
         s3.upload(
             &get_backup_path_for_archiver(letterboxd_archiver),
             "backup.zip",
             data.unwrap(),
         ).await;
-    } else {
-        let error_message = data.unwrap_err().to_string();
-        logger().error(&error_message);
-
-        let new_status = Some("Failed to archive Letterboxd!".to_string());
-        status_server().set_error_message(new_status);
     }
 }
 
