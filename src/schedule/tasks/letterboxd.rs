@@ -1,7 +1,7 @@
-use crate::api_wrappers::s3::utils::get_backup_path_for_archiver;
 use crate::api_wrappers::s3::S3Client;
-use crate::archivers::letterboxd::LetterboxdArchiver;
+use crate::api_wrappers::s3::utils::get_backup_path_for_archiver;
 use crate::archivers::InstantArchiver;
+use crate::archivers::letterboxd::LetterboxdArchiver;
 use crate::environment::environment;
 use crate::logger::logger;
 use crate::schedule::tasks::Task;
@@ -28,7 +28,8 @@ async fn callback() {
             &get_backup_path_for_archiver(letterboxd_archiver),
             "backup.zip",
             data.unwrap(),
-        ).await;
+        )
+        .await;
     }
 }
 

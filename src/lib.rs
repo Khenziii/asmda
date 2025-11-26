@@ -3,12 +3,12 @@ pub mod archivers;
 pub mod environment;
 pub mod input;
 pub mod logger;
+pub mod options;
 pub mod schedule;
 pub mod signals;
+pub mod status;
 pub mod tui;
 pub mod utils;
-pub mod options;
-pub mod status;
 
 use options::OptionsHandler;
 

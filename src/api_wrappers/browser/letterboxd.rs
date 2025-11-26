@@ -2,10 +2,10 @@ use crate::api_wrappers::browser::{APIWrapper, BrowserAPIWrapper, implementation
 use crate::environment::environment;
 use crate::utils::constants::APIWrapperIdentificator;
 use crate::{impl_browser_api_wrapper, init_new_browser_api_wrapper};
+use anyhow::{Context, Result};
+use async_trait::async_trait;
 use fantoccini::{Client, Locator};
 use reqwest::header::{COOKIE, HeaderValue};
-use anyhow::{Result, Context};
-use async_trait::async_trait;
 
 init_new_browser_api_wrapper!(LetterboxdBrowserAPIWrapper);
 

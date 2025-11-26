@@ -1,6 +1,6 @@
 use super::CommandOption;
-use crate::utils::types::AsyncOutput;
 use crate::environment::environment;
+use crate::utils::types::AsyncOutput;
 
 static HELP_MESSAGE_HEADER: &str = "
 Usage:
@@ -8,7 +8,10 @@ $ asmda [option]
 ";
 
 fn get_help_message_footer() -> String {
-    format!("\n\nASMDA v{} by Khenzii <khenzii@khenzii.dev>", environment().metadata.program_version)
+    format!(
+        "\n\nASMDA v{} by Khenzii <khenzii@khenzii.dev>",
+        environment().metadata.program_version
+    )
 }
 
 static HELP_MESSAGE_END: &str = "
@@ -29,10 +32,19 @@ pub fn get_option(context: &[CommandOption]) -> CommandOption {
         .iter()
         .map(|option| format_option_to_string(&option.string_identifiers, &option.description))
         .collect();
-    options_string.push(format_option_to_string(&self_string_identifiers, &self_description));
+    options_string.push(format_option_to_string(
+        &self_string_identifiers,
+        &self_description,
+    ));
     let options_help_part = format!("\n{}", options_string.join("\n"));
-    let help_message = format!("{}{}{}{}", HELP_MESSAGE_HEADER.trim_start(), options_help_part, get_help_message_footer(), HELP_MESSAGE_END.trim_end());
-    
+    let help_message = format!(
+        "{}{}{}{}",
+        HELP_MESSAGE_HEADER.trim_start(),
+        options_help_part,
+        get_help_message_footer(),
+        HELP_MESSAGE_END.trim_end()
+    );
+
     let callback = Box::new(move || {
         let value = help_message.clone();
 

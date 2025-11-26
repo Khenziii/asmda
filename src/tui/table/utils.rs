@@ -1,4 +1,4 @@
-use crate::schedule::tasks::{Task, get_enabled_tasks, get_all_tasks};
+use crate::schedule::tasks::{Task, get_all_tasks, get_enabled_tasks};
 use crate::tui::table::tasks_table::utils::{
     add_tasks_to_tasks_table, get_tasks_table_height_by_tasks,
 };

@@ -46,7 +46,9 @@ pub fn setup_signals_event_loop() {
 pub fn setup_status_server() {
     let config = environment::environment();
 
-    if !config.status_server.enable { return };
+    if !config.status_server.enable {
+        return;
+    };
 
     let server = status_server();
     server.start_non_blocking();

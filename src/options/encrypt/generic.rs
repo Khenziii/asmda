@@ -9,9 +9,11 @@ pub fn format_armored_value(value: String) -> String {
 
 pub fn ask_for_string_without_prompt() -> String {
     io::stdout().flush().unwrap();
-    
+
     let mut value = String::new();
-    io::stdin().read_line(&mut value).expect("Failed to read line!");
+    io::stdin()
+        .read_line(&mut value)
+        .expect("Failed to read line!");
 
     value
 }
@@ -37,7 +39,7 @@ pub fn ask_for_multiline_armored_string() -> String {
         } else {
             result[index - 1].starts_with("-----")
         };
-        
+
         if line.trim_end().is_empty() && !previous_line_was_armor {
             break;
         }

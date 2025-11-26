@@ -68,7 +68,10 @@ impl TerminalUserInterface {
                 rows.push(String::from(""));
             }
         } else {
-            remove_last_entries_from_vector(&mut rows, (-self.current_cursor_offset).max(0) as usize);
+            remove_last_entries_from_vector(
+                &mut rows,
+                (-self.current_cursor_offset).max(0) as usize,
+            );
         }
 
         for row in &rows {
@@ -92,7 +95,8 @@ impl TerminalUserInterface {
             return;
         }
 
-        let current_height = self.calculate_height_including_scroll(self.get_height(), self.current_cursor_offset);
+        let current_height =
+            self.calculate_height_including_scroll(self.get_height(), self.current_cursor_offset);
         if let Some(previous_height_raw) = previous_height {
             let height_difference = current_height.saturating_sub(previous_height_raw);
 
@@ -127,7 +131,8 @@ impl TerminalUserInterface {
         }
 
         if render {
-            let height_including_scroll = self.calculate_height_including_scroll(current_tui_height, self.current_cursor_offset);
+            let height_including_scroll = self
+                .calculate_height_including_scroll(current_tui_height, self.current_cursor_offset);
             self.rerender(Some(height_including_scroll));
         }
     }
@@ -167,15 +172,22 @@ impl TerminalUserInterface {
             Err(_) => 50,
         };
         // There's nothing to scroll to.
-        if self.get_height() <= rows_in_terminal as usize { return };
+        if self.get_height() <= rows_in_terminal as usize {
+            return;
+        };
         // Tried to scroll too far down.
-        if new_cursor_offset > 0 { return };
+        if new_cursor_offset > 0 {
+            return;
+        };
         // Tried to scroll too far up.
-        if (-new_cursor_offset) as usize > self.get_height() - rows_in_terminal as usize { return };
+        if (-new_cursor_offset) as usize > self.get_height() - rows_in_terminal as usize {
+            return;
+        };
 
         let old_cursor_offset = self.current_cursor_offset;
         self.current_cursor_offset = new_cursor_offset;
-        let height_including_scroll = self.calculate_height_including_scroll(self.get_height(), old_cursor_offset);
+        let height_including_scroll =
+            self.calculate_height_including_scroll(self.get_height(), old_cursor_offset);
         self.rerender(Some(height_including_scroll));
     }
 }

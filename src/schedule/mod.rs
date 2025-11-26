@@ -1,8 +1,8 @@
 pub mod tasks;
 
 use crate::logger::logger;
-use tasks::{Task, get_enabled_tasks};
 use std::mem::take;
+use tasks::{Task, get_enabled_tasks};
 
 pub struct Scheduler {
     tasks: Vec<Task>,

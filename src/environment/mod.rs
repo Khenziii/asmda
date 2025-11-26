@@ -5,11 +5,15 @@ pub mod utils;
 use constants::EnvironmentVariable::*;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
-use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment, StatusServerEnvironment};
+use types::{
+    Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment,
+    StatusServerEnvironment,
+};
 use utils::decryption_key_passphrase::decryption_key_passphrase;
 use utils::environment::get_env_var;
 use utils::generic::{
-    as_integer, as_boolean, get_database_path, get_logs_directory_path, get_running_environment, get_program_version
+    as_boolean, as_integer, get_database_path, get_logs_directory_path, get_program_version,
+    get_running_environment,
 };
 
 static ENVIRONMENT: OnceCell<Environment> = OnceCell::new();
@@ -28,7 +32,7 @@ pub fn environment() -> &'static Environment {
                 password: get_env_var(LetterboxdPassword),
                 username: get_env_var(LetterboxdUsername),
                 backup_frequency: as_integer(get_env_var(LetterboxdBackupFrequency)),
-                backup_enable: as_boolean(get_env_var(LetterboxdBackupEnable))
+                backup_enable: as_boolean(get_env_var(LetterboxdBackupEnable)),
             },
             s3: S3Environment {
                 region: get_env_var(S3Region),

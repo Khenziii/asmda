@@ -1,8 +1,7 @@
 use pgp::{
-    decrypt as pgp_decrypt,
-    encrypt as pgp_encrypt,
-    native::{types::SecretKeyTrait, SignedPublicKey, SignedSecretKey},
-    read_skey_from_string
+    decrypt as pgp_decrypt, encrypt as pgp_encrypt,
+    native::{SignedPublicKey, SignedSecretKey, types::SecretKeyTrait},
+    read_skey_from_string,
 };
 
 pub struct EncryptionManager {
@@ -16,8 +15,15 @@ impl EncryptionManager {
         let key = read_skey_from_string(key_str)
             .await
             .expect("Failed to create key from String!");
-        let public_key = key.public_key().sign(&key, || key_password.clone()).expect("Failed to generate public key based on the secret one!");
-        Self { key, public_key, key_password }
+        let public_key = key
+            .public_key()
+            .sign(&key, || key_password.clone())
+            .expect("Failed to generate public key based on the secret one!");
+        Self {
+            key,
+            public_key,
+            key_password,
+        }
     }
 
     pub async fn decrypt(&self, encrypted: String) -> String {
@@ -31,7 +37,9 @@ impl EncryptionManager {
     }
 
     pub async fn encrypt(&self, raw: String) -> String {
-        let encrypted_bytes = pgp_encrypt(vec![self.public_key.clone()], raw.into_bytes()).await.expect("Failed to encrypt passed string!");
+        let encrypted_bytes = pgp_encrypt(vec![self.public_key.clone()], raw.into_bytes())
+            .await
+            .expect("Failed to encrypt passed string!");
         String::from_utf8(encrypted_bytes)
             .unwrap()
             .trim_end()
@@ -156,7 +164,8 @@ xvqCU/aKn1UoOkqcfJ820sbW+/2MPMYhC9WcaTiwdX9efVJWqlUXyfSqXJPQ
             let test_encrypted_message = TEST_ENCRYPTED_MESSAGE.to_string();
             let test_raw_message = TEST_RAW_MESSAGE.to_string();
 
-            let encryption_manager = EncryptionManager::new(test_private_key, test_private_key_password).await;
+            let encryption_manager =
+                EncryptionManager::new(test_private_key, test_private_key_password).await;
             let decrypted_raw_message = encryption_manager.decrypt(test_encrypted_message).await;
 
             assert_eq!(test_raw_message, decrypted_raw_message);
@@ -168,7 +177,8 @@ xvqCU/aKn1UoOkqcfJ820sbW+/2MPMYhC9WcaTiwdX9efVJWqlUXyfSqXJPQ
             let test_private_key_password = TEST_PRIVATE_KEY_PASSWORD.to_string();
             let test_raw_message = TEST_RAW_MESSAGE.to_string();
 
-            let encryption_manager = EncryptionManager::new(test_private_key, test_private_key_password).await;
+            let encryption_manager =
+                EncryptionManager::new(test_private_key, test_private_key_password).await;
             let encrypted_message = encryption_manager.encrypt(test_raw_message.clone()).await;
             let decrypted_raw_message = encryption_manager.decrypt(encrypted_message).await;
 

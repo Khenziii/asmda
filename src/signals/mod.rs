@@ -15,8 +15,10 @@ fn wait_until_running_in_foreground() {
         let process_group_id = unsafe { libc::getpgrp() };
         let terminal_owner_process_group_id = unsafe { libc::tcgetpgrp(libc::STDIN_FILENO) };
         let running_in_foreground = process_group_id == terminal_owner_process_group_id;
-        
-        if running_in_foreground { break };
+
+        if running_in_foreground {
+            break;
+        };
 
         std::thread::sleep(Duration::from_millis(LOCAL_POLLING_RATE_MS));
     }
@@ -39,15 +41,15 @@ fn suspend() {
 
 fn resume() {
     wait_until_running_in_foreground();
-    
+
     logger().log("Reattaching...");
-    
+
     let input_handler = user_input_handler();
     input_handler.set_is_active(true);
-    
+
     enable_terminal_alternate_screen_mode();
     enable_terminal_raw_mode();
-    
+
     let mut ui = tui();
     ui.set_is_active(true);
     ui.rerender(None);

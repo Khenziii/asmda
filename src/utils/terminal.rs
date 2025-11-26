@@ -1,6 +1,6 @@
 use crate::tui;
 use crate::tui::TerminalUserInterface;
-use crate::tui::table::utils::{setup_tasks_table_in_tui, TableTasksDataGetter};
+use crate::tui::table::utils::{TableTasksDataGetter, setup_tasks_table_in_tui};
 use crate::tui::table::{Table, tasks_table::table::TasksTable};
 use crossterm::{ExecutableCommand, cursor, terminal};
 use std::io::{Stdout, stdout};
@@ -100,8 +100,8 @@ mod tests {
         use super::super::*;
         use crate::logger::logger;
         use crate::schedule::tasks;
-        use crate::tui::tui;
         use crate::tui::table::utils::convert_tasks_to_thread_safe_task_data;
+        use crate::tui::tui;
         use colored::Colorize;
         use serial_test::serial;
 

@@ -1,11 +1,11 @@
 use super::CommandOption;
 use crate::init_command_option;
 use crate::logger::logger;
-use crate::schedule::tasks::get_enabled_tasks;
 use crate::schedule::Scheduler;
+use crate::schedule::tasks::get_enabled_tasks;
 use crate::tui::table::utils::convert_tasks_to_thread_safe_task_data;
 use crate::utils::{startup::startup, terminal::setup_tui};
-use std::{thread, sync::Arc};
+use std::{sync::Arc, thread};
 
 async fn callback() {
     setup_tui(Some(Arc::new(Box::new(|| {
