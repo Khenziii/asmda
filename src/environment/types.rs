@@ -37,6 +37,12 @@ pub struct SecretsEnvironment {
 }
 
 #[derive(Debug)]
+pub struct StatusServerEnvironment {
+    pub enable: bool,
+    pub port: u64,
+}
+
+#[derive(Debug)]
 pub struct Environment {
     // All additional data that is handy to have returned by the `environment` method, but isn't
     // configurable by environment variables.
@@ -44,4 +50,5 @@ pub struct Environment {
     pub letterboxd: LetterboxdEnvironment,
     pub s3: S3Environment,
     pub secrets: SecretsEnvironment,
+    pub status_server: StatusEnvironment,
 }

@@ -5,7 +5,7 @@ pub mod utils;
 use constants::EnvironmentVariable::*;
 use dotenv::dotenv;
 use once_cell::sync::OnceCell;
-use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment};
+use types::{Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment, StatusServerEnvironment};
 use utils::decryption_key_passphrase::decryption_key_passphrase;
 use utils::environment::get_env_var;
 use utils::generic::{
@@ -41,6 +41,10 @@ pub fn environment() -> &'static Environment {
                 are_encrypted: as_boolean(get_env_var(SecretsAreEncrypted)),
                 decryption_key: get_env_var(SecretsDecryptionKey),
                 decryption_key_passphrase: decryption_key_passphrase().clone(),
+            },
+            status_server: StatusServerEnvironment {
+                enable: as_boolean(get_env_var(StatusServerEnable)),
+                port: as_integer(get_env_var(StatusServerPort)),
             },
         }
     })

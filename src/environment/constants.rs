@@ -21,6 +21,8 @@ pub enum EnvironmentVariable {
     SecretsAreEncrypted,
     SecretsDecryptionKey,
     SecretsDecryptionKeyPassphrase,
+    StatusServerEnable,
+    StatusServerPort,
 }
 
 impl EnvironmentVariable {
@@ -39,6 +41,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => "SECRETS_ARE_ENCRYPTED",
             Self::SecretsDecryptionKey => "SECRETS_DECRYPTION_KEY",
             Self::SecretsDecryptionKeyPassphrase => "SECRETS_DECRYPTION_KEY_PASSPHRASE",
+            Self::StatusServerEnable => "STATUS_SERVER_ENABLE",
+            Self::StatusServerPort => "STATUS_SERVER_PORT",
         };
         str.to_string()
     }
@@ -58,6 +62,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => false,
             Self::SecretsDecryptionKey => false,
             Self::SecretsDecryptionKeyPassphrase => false,
+            Self::StatusServerEnable => false,
+            Self::StatusServerPort => false,
         }
     }
 
@@ -75,6 +81,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => Some("false"),
             Self::SecretsDecryptionKey => None,
             Self::SecretsDecryptionKeyPassphrase => None,
+            Self::StatusServerEnable => Some("true"),
+            Self::StatusServerPort => Some("3002"),
         };
         value.map(|value| value.to_string())
     }
