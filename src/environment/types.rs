@@ -50,5 +50,5 @@ pub struct Environment {
     pub letterboxd: LetterboxdEnvironment,
     pub s3: S3Environment,
     pub secrets: SecretsEnvironment,
-    pub status_server: StatusEnvironment,
+    pub status_server: StatusServerEnvironment,
 }

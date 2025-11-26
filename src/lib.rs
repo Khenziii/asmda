@@ -8,6 +8,7 @@ pub mod signals;
 pub mod tui;
 pub mod utils;
 pub mod options;
+pub mod status;
 
 use options::OptionsHandler;
 
