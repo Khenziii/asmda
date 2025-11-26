@@ -1,16 +1,23 @@
-use pgp::{decrypt as pgp_decrypt, native::SignedSecretKey, read_skey_from_string};
+use pgp::{
+    decrypt as pgp_decrypt,
+    encrypt as pgp_encrypt,
+    native::{types::SecretKeyTrait, SignedPublicKey, SignedSecretKey},
+    read_skey_from_string
+};
 
-pub struct Decryptor {
+pub struct EncryptionManager {
     key: SignedSecretKey,
+    public_key: SignedPublicKey,
     key_password: String,
 }
 
-impl Decryptor {
+impl EncryptionManager {
     pub async fn new(key_str: String, key_password: String) -> Self {
         let key = read_skey_from_string(key_str)
             .await
             .expect("Failed to create key from String!");
-        Self { key, key_password }
+        let public_key = key.public_key().sign(&key, || key_password.clone()).expect("Failed to generate public key based on the secret one!");
+        Self { key, public_key, key_password }
     }
 
     pub async fn decrypt(&self, encrypted: String) -> String {
@@ -22,6 +29,14 @@ impl Decryptor {
             .trim_end()
             .to_string()
     }
+
+    pub async fn encrypt(&self, raw: String) -> String {
+        let encrypted_bytes = pgp_encrypt(vec![self.public_key.clone()], raw.into_bytes()).await.expect("Failed to encrypt passed string!");
+        String::from_utf8(encrypted_bytes)
+            .unwrap()
+            .trim_end()
+            .to_string()
+    }
 }
 
 #[cfg(test)]
@@ -29,10 +44,7 @@ mod tests {
     mod decrypt {
         use super::super::*;
 
-        #[tokio::test]
-        async fn decrypts_correctly() {
-            let test_private_key = String::from(
-                "
+        static TEST_PRIVATE_KEY: &str = "
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 
 lQWGBGjkDI0BDADCX904D1L/YKRUepGuEc6kHPkwm7k38lhCnOpu+ORg9I/Hy9dS
@@ -117,11 +129,9 @@ fTY2YK8jnXzLARxw4x0O7vZHh8Sjs2cQR8VsmbOYkdWWujy/U/Chk9LToyUN71S6
 3gg1AEJ2wrRofcWnQjklYCmoPCRNQFiWi2cANUZFXz0Td/nF2n0=
 =tZdn
 -----END PGP PRIVATE KEY BLOCK-----
-",
-            );
-            let test_private_key_password = String::from("test_private_key_password");
-            let test_encrypted_message = String::from(
-                "
+";
+        static TEST_PRIVATE_KEY_PASSWORD: &str = "test_private_key_password";
+        static TEST_ENCRYPTED_MESSAGE: &str = "
 -----BEGIN PGP MESSAGE-----
 
 hQGMA2hxj2cLZDw1AQwApJBGwIWkF39EyBbNcVFkgeWsm2LSd0ZnvMHlzdDuGfSk
@@ -136,12 +146,31 @@ zN97LZpXsLzANKqXEcWA0kwBJNlrBe68fDPvq23AIRRTdK+USzItQb0b+gX5YhfJ
 xvqCU/aKn1UoOkqcfJ820sbW+/2MPMYhC9WcaTiwdX9efVJWqlUXyfSqXJPQ
 =caX1
 -----END PGP MESSAGE-----
-",
-            );
-            let test_raw_message = String::from("Komm, susser Tod");
+";
+        static TEST_RAW_MESSAGE: &str = "Komm, susser Tod";
 
-            let decryptor = Decryptor::new(test_private_key, test_private_key_password).await;
-            let decrypted_raw_message = decryptor.decrypt(test_encrypted_message).await;
+        #[tokio::test]
+        async fn decrypts_correctly() {
+            let test_private_key = TEST_PRIVATE_KEY.to_string();
+            let test_private_key_password = TEST_PRIVATE_KEY_PASSWORD.to_string();
+            let test_encrypted_message = TEST_ENCRYPTED_MESSAGE.to_string();
+            let test_raw_message = TEST_RAW_MESSAGE.to_string();
+
+            let encryption_manager = EncryptionManager::new(test_private_key, test_private_key_password).await;
+            let decrypted_raw_message = encryption_manager.decrypt(test_encrypted_message).await;
+
+            assert_eq!(test_raw_message, decrypted_raw_message);
+        }
+
+        #[tokio::test]
+        async fn encrypts_correctly() {
+            let test_private_key = TEST_PRIVATE_KEY.to_string();
+            let test_private_key_password = TEST_PRIVATE_KEY_PASSWORD.to_string();
+            let test_raw_message = TEST_RAW_MESSAGE.to_string();
+
+            let encryption_manager = EncryptionManager::new(test_private_key, test_private_key_password).await;
+            let encrypted_message = encryption_manager.encrypt(test_raw_message.clone()).await;
+            let decrypted_raw_message = encryption_manager.decrypt(encrypted_message).await;
 
             assert_eq!(test_raw_message, decrypted_raw_message);
         }

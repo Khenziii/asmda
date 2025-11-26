@@ -1,8 +1,9 @@
+pub mod macros;
 pub mod run;
 pub mod logs;
 pub mod help;
 pub mod version;
-pub mod macros;
+pub mod encrypt;
 
 use crate::utils::types::AsyncFn;
 use std::env;
@@ -25,7 +26,7 @@ impl Default for OptionsHandler {
 
 impl OptionsHandler {
     pub fn new() -> Self {
-        let mut options: Vec<CommandOption> = vec![run::get_option(), logs::get_option(), version::get_option()];
+        let mut options: Vec<CommandOption> = vec![run::get_option(), logs::get_option(), version::get_option(), encrypt::get_option()];
         let help_option = help::get_option(&options);
         options.push(help_option);
 

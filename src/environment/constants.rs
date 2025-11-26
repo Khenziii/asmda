@@ -1,3 +1,5 @@
+use strum_macros::EnumIter;
+
 #[derive(PartialEq, Debug)]
 pub enum RunningEnvironment {
     Development,
@@ -5,7 +7,7 @@ pub enum RunningEnvironment {
 }
 
 // All supported environment variables.
-#[derive(Clone, Debug)]
+#[derive(EnumIter, Clone, Debug)]
 pub enum EnvironmentVariable {
     LetterboxdPassword,
     LetterboxdUsername,
