@@ -46,7 +46,7 @@ async fn callback() {
     let variable_name = ask_for_variable_name();
     let encrypted_value = get_encrypted_value(key.clone(), key_passphrase.clone()).await;
 
-    let secrets_decryption_key_line = format_armored_value(key.to_armored_string(None).unwrap());
+    let secrets_decryption_key_line = format!("SECRETS_DECRYPTION_KEY=\"{}\"", format_armored_value(key.to_armored_string(None).unwrap()));
     let secrets_decryption_key_passphrase_line = format!("SECRETS_DECRYPTION_KEY_PASSPHRASE=\"{}\"", key_passphrase);
     let variable_name_and_encrypted_value_line = format!("{}=\"{}\"", variable_name.trim(), format_armored_value(encrypted_value));
     let generated_message: Vec<&str> = vec![
