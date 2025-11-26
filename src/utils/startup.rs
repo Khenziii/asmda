@@ -2,7 +2,7 @@ use crate::environment;
 use crate::input::user_input_handler;
 use crate::logger::logger;
 use crate::signals::SignalsHandler;
-use crate::status::StatusServer;
+use crate::status::status_server;
 use crate::utils::tests::is_test_environment;
 use crossterm::ExecutableCommand;
 use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
@@ -48,7 +48,7 @@ pub fn setup_status_server() {
 
     if !config.status_server.enable { return };
 
-    let server = StatusServer::new();
+    let server = status_server();
     server.start_non_blocking();
 }
 
