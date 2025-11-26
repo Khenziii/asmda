@@ -21,7 +21,7 @@ fn get_logs_directory_parent_path() -> PathBuf {
         .to_path_buf()
 }
 
-fn get_latest_log_symlink_path() -> PathBuf {
+pub fn get_latest_log_symlink_path() -> PathBuf {
     let logs_directory_parent_path = get_logs_directory_parent_path();
     let symlink_path_raw = format!(
         "{}/latest.log",

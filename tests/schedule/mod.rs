@@ -40,6 +40,7 @@ init_new_task!(
         callback: task_callback!(first_task_callback),
         run_interval_seconds: 3,
         app_name: constants::ArchiverIdentificator::Tests,
+        is_enabled: true,
     },
     get_first_task
 );
@@ -49,6 +50,7 @@ init_new_task!(
         callback: task_callback!(second_task_callback),
         run_interval_seconds: 4,
         app_name: constants::ArchiverIdentificator::Tests,
+        is_enabled: true,
     },
     get_second_task
 );
@@ -58,6 +60,7 @@ init_new_task!(
         callback: task_callback!(third_task_callback),
         run_interval_seconds: 5,
         app_name: constants::ArchiverIdentificator::Tests,
+        is_enabled: true,
     },
     get_third_task
 );

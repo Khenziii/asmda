@@ -7,6 +7,12 @@ pub fn as_boolean(value: String) -> bool {
         .unwrap_or_else(|_| panic!("Failed to cast {} into a boolean!", &value))
 }
 
+pub fn as_integer(value: String) -> u64 {
+    value
+        .parse::<u64>()
+        .unwrap_or_else(|_| panic!("Failed to cast {} into an u64!", &value))
+}
+
 pub fn get_running_environment() -> RunningEnvironment {
     if cfg!(debug_assertions) {
         return RunningEnvironment::Development;
@@ -43,4 +49,8 @@ pub fn get_logs_directory_path() -> String {
     } else {
         String::from("./logs")
     }
+}
+
+pub fn get_program_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
 }

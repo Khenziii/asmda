@@ -1,3 +1,5 @@
+use strum_macros::EnumIter;
+
 #[derive(PartialEq, Debug)]
 pub enum RunningEnvironment {
     Development,
@@ -5,10 +7,12 @@ pub enum RunningEnvironment {
 }
 
 // All supported environment variables.
-#[derive(Clone, Debug)]
+#[derive(EnumIter, Clone, Debug)]
 pub enum EnvironmentVariable {
     LetterboxdPassword,
     LetterboxdUsername,
+    LetterboxdBackupFrequency,
+    LetterboxdBackupEnable,
     S3Region,
     S3Url,
     S3BucketName,
@@ -17,6 +21,8 @@ pub enum EnvironmentVariable {
     SecretsAreEncrypted,
     SecretsDecryptionKey,
     SecretsDecryptionKeyPassphrase,
+    StatusServerEnable,
+    StatusServerPort,
 }
 
 impl EnvironmentVariable {
@@ -25,6 +31,8 @@ impl EnvironmentVariable {
         let str = match self {
             Self::LetterboxdPassword => "LETTERBOXD_PASSWORD",
             Self::LetterboxdUsername => "LETTERBOXD_USERNAME",
+            Self::LetterboxdBackupFrequency => "LETTERBOXD_BACKUP_FREQUENCY",
+            Self::LetterboxdBackupEnable => "LETTERBOXD_BACKUP_ENABLE",
             Self::S3Region => "S3_REGION",
             Self::S3Url => "S3_URL",
             Self::S3BucketName => "S3_BUCKET_NAME",
@@ -33,6 +41,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => "SECRETS_ARE_ENCRYPTED",
             Self::SecretsDecryptionKey => "SECRETS_DECRYPTION_KEY",
             Self::SecretsDecryptionKeyPassphrase => "SECRETS_DECRYPTION_KEY_PASSPHRASE",
+            Self::StatusServerEnable => "STATUS_SERVER_ENABLE",
+            Self::StatusServerPort => "STATUS_SERVER_PORT",
         };
         str.to_string()
     }
@@ -42,6 +52,8 @@ impl EnvironmentVariable {
         match self {
             Self::LetterboxdPassword => true,
             Self::LetterboxdUsername => false,
+            Self::LetterboxdBackupFrequency => false,
+            Self::LetterboxdBackupEnable => false,
             Self::S3Region => false,
             Self::S3Url => false,
             Self::S3BucketName => false,
@@ -50,6 +62,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => false,
             Self::SecretsDecryptionKey => false,
             Self::SecretsDecryptionKeyPassphrase => false,
+            Self::StatusServerEnable => false,
+            Self::StatusServerPort => false,
         }
     }
 
@@ -57,6 +71,8 @@ impl EnvironmentVariable {
         let value = match self {
             Self::LetterboxdPassword => None,
             Self::LetterboxdUsername => None,
+            Self::LetterboxdBackupFrequency => Some("60"),
+            Self::LetterboxdBackupEnable => Some("true"),
             Self::S3Region => Some("eu-central-1"),
             Self::S3Url => Some("http://localhost:9000"),
             Self::S3BucketName => Some("backups"),
@@ -65,6 +81,8 @@ impl EnvironmentVariable {
             Self::SecretsAreEncrypted => Some("false"),
             Self::SecretsDecryptionKey => None,
             Self::SecretsDecryptionKeyPassphrase => None,
+            Self::StatusServerEnable => Some("true"),
+            Self::StatusServerPort => Some("3002"),
         };
         value.map(|value| value.to_string())
     }

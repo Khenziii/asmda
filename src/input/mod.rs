@@ -1,7 +1,10 @@
 use crate::logger::logger;
+use crate::tui::tui;
+use crate::utils::constants::LOCAL_POLLING_RATE_MS;
 use crate::utils::exit::exit;
 use crossterm::event;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
+use crossterm::terminal::size;
 use once_cell::sync::OnceCell;
 use std::sync::{Arc, atomic::AtomicBool, atomic::Ordering};
 use std::thread;
@@ -53,6 +56,49 @@ fn get_handled_events() -> Vec<UserInputEvent> {
                 suspend();
             }),
         },
+        UserInputEvent {
+            key: KeyCode::Char('j'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                let current_cursor_offset = ui.get_current_cursor_offset();
+
+                ui.set_current_cursor_offset(current_cursor_offset + 1);
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('J'),
+            modifier: KeyModifiers::SHIFT,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                ui.set_current_cursor_offset(0);
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('k'),
+            modifier: KeyModifiers::NONE,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                let current_cursor_offset = ui.get_current_cursor_offset();
+
+                ui.set_current_cursor_offset(current_cursor_offset - 1);
+            }),
+        },
+        UserInputEvent {
+            key: KeyCode::Char('K'),
+            modifier: KeyModifiers::SHIFT,
+            on_trigger: Box::new(|| {
+                let mut ui = tui();
+                let rows_in_terminal = match size() {
+                    Ok((_, rows)) => rows - 1,
+                    Err(_) => 50,
+                };
+                let ui_height = ui.get_height();
+                let max_scroll_offset = -((ui_height - rows_in_terminal as usize) as i64);
+
+                ui.set_current_cursor_offset(max_scroll_offset);
+            }),
+        },
     ]
 }
 
@@ -70,7 +116,7 @@ impl Default for UserInputHandler {
 impl UserInputHandler {
     pub fn new() -> Self {
         Self {
-            events_check_frequency: 500,
+            events_check_frequency: LOCAL_POLLING_RATE_MS,
             is_active: AtomicBool::new(true),
         }
     }

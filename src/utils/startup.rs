@@ -2,6 +2,7 @@ use crate::environment;
 use crate::input::user_input_handler;
 use crate::logger::logger;
 use crate::signals::SignalsHandler;
+use crate::status::status_server;
 use crate::utils::tests::is_test_environment;
 use crossterm::ExecutableCommand;
 use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
@@ -42,6 +43,17 @@ pub fn setup_signals_event_loop() {
     handler.run();
 }
 
+pub fn setup_status_server() {
+    let config = environment::environment();
+
+    if !config.status_server.enable {
+        return;
+    };
+
+    let server = status_server();
+    server.start_non_blocking();
+}
+
 pub fn startup() {
     install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
@@ -50,6 +62,7 @@ pub fn startup() {
         enable_terminal_raw_mode();
         setup_user_event_loop();
         setup_signals_event_loop();
+        setup_status_server();
     }
 }
 

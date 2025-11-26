@@ -1,3 +1,5 @@
+pub mod utils;
+
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
 use crate::utils::constants::APIWrapperIdentificator;

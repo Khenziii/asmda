@@ -1,6 +1,7 @@
 use crate::api_wrappers::browser::letterboxd::LetterboxdBrowserAPIWrapper;
 use crate::archivers::{Archiver, InstantArchiver};
 use crate::utils::constants::ArchiverIdentificator;
+use anyhow::Result;
 
 pub struct LetterboxdArchiver;
 
@@ -11,12 +12,12 @@ impl Archiver for LetterboxdArchiver {
 }
 
 impl InstantArchiver for LetterboxdArchiver {
-    async fn get_data(&self) -> Vec<u8> {
+    async fn get_data(&self) -> Result<Vec<u8>> {
         let lettterboxd_wrapper = LetterboxdBrowserAPIWrapper::new().await;
-        lettterboxd_wrapper.launch().await;
-        let data = lettterboxd_wrapper.export_data().await;
+        lettterboxd_wrapper.launch().await?;
+        let data = lettterboxd_wrapper.export_data().await?;
         lettterboxd_wrapper.close().await;
 
-        data
+        Ok(data)
     }
 }

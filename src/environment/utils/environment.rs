@@ -1,7 +1,7 @@
 use crate::environment::constants::{EnvironmentVariable, RunningEnvironment};
 use crate::environment::utils::decryption_key_passphrase::decryption_key_passphrase;
 use crate::environment::utils::generic::{as_boolean, get_running_environment};
-use crate::utils::encryption::Decryptor;
+use crate::utils::encryption::EncryptionManager;
 use crate::utils::multithreading;
 use secrecy::ExposeSecret;
 
@@ -27,7 +27,7 @@ impl EnvironmentVariableGetterResultParser for String {
 
 impl EnvironmentVariableGetterResultParser for Option<String> {
     fn from_result(value: Option<String>, _: EnvironmentVariable) -> Self {
-        value.map(|v| default_variable_value_parser(v))
+        value.map(default_variable_value_parser)
     }
 }
 
@@ -65,8 +65,9 @@ async fn get_env_var_async<T: EnvironmentVariableGetterResultParser>(
         let key = option_key.expect("Encryption key is not defined, even though `SECRETS_ARE_ENCRYPTED` is set to true. Please configure it and rerun the program");
         let key_passphrase = decryption_key_passphrase().clone().unwrap();
 
-        let decryptor = Decryptor::new(key, key_passphrase.expose_secret().to_string()).await;
-        let decrypted = decryptor.decrypt(value.unwrap()).await;
+        let encryption_manager =
+            EncryptionManager::new(key, key_passphrase.expose_secret().to_string()).await;
+        let decrypted = encryption_manager.decrypt(value.unwrap()).await;
         value = Some(decrypted);
     }
 

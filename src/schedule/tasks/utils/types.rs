@@ -1,13 +1,12 @@
 use crate::utils::constants::ArchiverIdentificator;
-use std::future::Future;
-use std::pin::Pin;
+use crate::utils::types::AsyncFnMut;
 use std::sync::Mutex;
 
 pub struct TaskConfig {
     pub run_interval_seconds: u64,
-    pub callback: Callback,
+    pub callback: AsyncFnMut,
     pub app_name: ArchiverIdentificator,
+    pub is_enabled: bool,
 }
 
-pub type Callback = Box<dyn FnMut() -> Pin<Box<dyn Future<Output = ()> + Send>> + Send>;
-pub type ThreadCallback = Mutex<Callback>;
+pub type ThreadCallback = Mutex<AsyncFnMut>;

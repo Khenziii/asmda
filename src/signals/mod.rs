@@ -1,14 +1,27 @@
 use crate::input::user_input_handler;
 use crate::logger::logger;
 use crate::tui::tui;
+use crate::utils::constants::LOCAL_POLLING_RATE_MS;
 use crate::utils::exit::{disable_terminal_raw_mode, exit, leave_alternate_terminal_screen_mode};
 use crate::utils::startup::{enable_terminal_alternate_screen_mode, enable_terminal_raw_mode};
 use signal_hook::consts::{SIGCONT, SIGINT, SIGTERM, SIGTSTP};
 use signal_hook::iterator::Signals;
 use std::thread;
+use std::time::Duration;
 
-fn running_in_foreground() -> bool {
-    unsafe { libc::tcgetpgrp(libc::STDIN_FILENO) == libc::getpgrp() }
+// Blocks until we have control of the terminal.
+fn wait_until_running_in_foreground() {
+    loop {
+        let process_group_id = unsafe { libc::getpgrp() };
+        let terminal_owner_process_group_id = unsafe { libc::tcgetpgrp(libc::STDIN_FILENO) };
+        let running_in_foreground = process_group_id == terminal_owner_process_group_id;
+
+        if running_in_foreground {
+            break;
+        };
+
+        std::thread::sleep(Duration::from_millis(LOCAL_POLLING_RATE_MS));
+    }
 }
 
 fn suspend() {
@@ -27,12 +40,9 @@ fn suspend() {
 }
 
 fn resume() {
-    // If started again in background, don't redraw the UI.
-    if !running_in_foreground() {
-        return;
-    };
+    wait_until_running_in_foreground();
 
-    logger().log("Resuming...");
+    logger().log("Reattaching...");
 
     let input_handler = user_input_handler();
     input_handler.set_is_active(true);

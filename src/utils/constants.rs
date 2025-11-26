@@ -37,3 +37,5 @@ impl APIWrapperIdentificator {
         }
     }
 }
+
+pub static LOCAL_POLLING_RATE_MS: u64 = 250;

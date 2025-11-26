@@ -7,4 +7,5 @@ pub mod startup;
 pub mod terminal;
 pub mod tests;
 pub mod time;
+pub mod types;
 pub mod uuid;
