@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 startup_warning () {
 	echo "WARNING: This script was created to download and setup the ASMDA application."
