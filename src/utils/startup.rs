@@ -7,7 +7,9 @@ use crate::utils::tests::is_test_environment;
 use crossterm::ExecutableCommand;
 use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
 use rustls;
+use std::path::PathBuf;
 use std::io::stdout;
+use std::fs;
 
 pub fn show_environment_if_in_dev_env() {
     let config = environment::environment();
@@ -54,12 +56,36 @@ pub fn setup_status_server() {
     server.start_non_blocking();
 }
 
+fn create_if_missing_directory(path: String) {
+    let path_buf = PathBuf::from(&path);
+
+    if !path_buf.clone().exists() {
+        fs::create_dir_all(path_buf.clone()).unwrap_or_else(|_| {
+            panic!(
+                "Failed to create a required directory! ({})",
+                path_buf.clone().to_str().unwrap()
+            )
+        });
+    }
+}
+
+pub fn create_directories_if_missing() {
+    let config = environment::environment();
+
+    let logs_directory_path = config.metadata.logs_directory_path.clone();
+    create_if_missing_directory(logs_directory_path);
+
+    let database_path = config.metadata.database_path.clone();
+    create_if_missing_directory(database_path);
+}
+
 pub fn startup() {
     install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
     if !is_test_environment() {
         enable_terminal_alternate_screen_mode();
         enable_terminal_raw_mode();
+        create_directories_if_missing();
         setup_user_event_loop();
         setup_signals_event_loop();
         setup_status_server();
