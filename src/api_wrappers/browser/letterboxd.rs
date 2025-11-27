@@ -76,6 +76,7 @@ impl LetterboxdBrowserAPIWrapper {
             .send_keys(&config.letterboxd.username)
             .await
             .context("Failed to insert keys into `field-username` input!")?;
+
         self.client
             .find(Locator::Id("field-password"))
             .await
@@ -83,8 +84,9 @@ impl LetterboxdBrowserAPIWrapper {
             .send_keys(&config.letterboxd.password)
             .await
             .context("Failed to insert keys into `field-password` input!")?;
+
         self.client
-            .find(Locator::Css(".standalone-flow-button"))
+            .find(Locator::Css("button.standalone-flow-button"))
             .await
             .context("Failed to get the sign in button!")?
             .click()
