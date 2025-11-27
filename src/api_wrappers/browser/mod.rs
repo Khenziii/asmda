@@ -1,4 +1,5 @@
 use crate::api_wrappers::APIWrapper;
+use crate::environment;
 use crate::logger::logger;
 use async_trait::async_trait;
 use fantoccini::Client;
@@ -15,10 +16,13 @@ pub trait BrowserAPIWrapper: APIWrapper {
 }
 
 async fn get_client() -> Client {
+    let config = environment::environment();
+
     loop {
+        let connection_url = format!("{}:{}", config.webdriver.url, config.webdriver.port);
         let client = ClientBuilder::rustls()
             .expect("Failed to use rustls to build a browser client!")
-            .connect("http://localhost:4444")
+            .connect(&connection_url)
             .await;
 
         match client {
