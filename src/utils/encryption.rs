@@ -11,10 +11,11 @@ pub struct EncryptionManager {
 }
 
 impl EncryptionManager {
-    pub async fn new(key_str: String, key_password: String) -> Self {
+    pub async fn new(key_str: String, key_password_arg: String) -> Self {
         let key = read_skey_from_string(key_str)
             .await
             .expect("Failed to create key from String!");
+        let key_password = key_password_arg.clone().trim().to_string();
         let public_key = key
             .public_key()
             .sign(&key, || key_password.clone())
