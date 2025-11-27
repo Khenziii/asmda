@@ -79,8 +79,11 @@ pub fn create_log_directory_if_missing() {
 pub fn create_database_directory_if_missing() {
     let config = environment::environment();
     let database_path = config.metadata.database_path.clone();
+    let database_path_buffer = PathBuf::from(database_path);
+    let database_directory_buffer = database_path_buffer.parent().unwrap();
+    let database_directory_path = database_directory_buffer.to_str().unwrap().to_string();
 
-    create_directory_if_missing(database_path);
+    create_directory_if_missing(database_directory_path);
 }
 
 pub fn create_directories_if_missing() {
