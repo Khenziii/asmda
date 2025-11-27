@@ -115,8 +115,10 @@ mod tests {
     mod logger {
         use super::super::*;
         use crate::utils::terminal::strip_color_from_string;
+        use serial_test::serial;
 
         #[test]
+        #[serial]
         fn reinitialization_works() {
             logger().log_without_date("hi!");
             logger().reinitialize();
