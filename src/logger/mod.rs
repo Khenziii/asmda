@@ -1,6 +1,8 @@
 pub mod log;
 
 use crate::tui;
+use crate::utils::startup::create_log_directory_if_missing;
+use crate::utils::tests::is_test_environment;
 use log::{LogBuilder, LogLevel};
 use once_cell::sync::OnceCell;
 use std::io::{Cursor, Write};
@@ -18,6 +20,10 @@ impl Default for Logger {
 
 impl Logger {
     pub fn new() -> Self {
+        // We need to call this again here if in test environment, as the usually used `startup`
+        // function doesn't run in tests. This prevents any errors caused by that.
+        if is_test_environment() { create_log_directory_if_missing() };
+
         Logger {
             history_buffer: Cursor::new(Vec::new()),
         }

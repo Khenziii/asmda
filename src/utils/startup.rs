@@ -56,7 +56,7 @@ pub fn setup_status_server() {
     server.start_non_blocking();
 }
 
-fn create_if_missing_directory(path: String) {
+fn create_directory_if_missing(path: String) {
     let path_buf = PathBuf::from(&path);
 
     if !path_buf.clone().exists() {
@@ -69,14 +69,23 @@ fn create_if_missing_directory(path: String) {
     }
 }
 
-pub fn create_directories_if_missing() {
+pub fn create_log_directory_if_missing() {
     let config = environment::environment();
-
     let logs_directory_path = config.metadata.logs_directory_path.clone();
-    create_if_missing_directory(logs_directory_path);
 
+    create_directory_if_missing(logs_directory_path);
+}
+
+pub fn create_database_directory_if_missing() {
+    let config = environment::environment();
     let database_path = config.metadata.database_path.clone();
-    create_if_missing_directory(database_path);
+
+    create_directory_if_missing(database_path);
+}
+
+pub fn create_directories_if_missing() {
+    create_log_directory_if_missing();
+    create_database_directory_if_missing();
 }
 
 pub fn startup() {
