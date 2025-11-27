@@ -4,6 +4,54 @@ ASMDA (automatic social media data archiver) is a [Rust](https://www.rust-lang.o
 
 <!-- TODO: add more description and details here later -->
 
+## Installation
+
+<details>
+
+<summary>Docker</summary>
+
+This program has been containerized using [Docker](https://www.docker.com), so you can easily run it in different environments. The image can be found here: `ghcr.io/khenziii/asmda:latest`.
+
+<!-- TODO: add an example of a full working `Dockerfile` here -->
+
+</details>
+
+<details>
+
+<summary>Native</summary>
+
+If you're using x86-64 Linux, you can easily download this app without any virtualization layers using the installer scripts. Here's how to use them:
+
+```shell
+$ wget https://raw.githubusercontent.com/khenziii/asmda/master/scripts/bootstrap.sh && sudo chmod +x bootstrap.sh && sudo ./bootstrap.sh && rm -f bootstrap.sh
+```
+
+> [!TIP]
+> You can pass `"y"` as the first parameter when calling this script to skip any "Are you sure?" questions. Here's how that would look like:
+> ```shell
+> $ wget https://raw.githubusercontent.com/khenziii/asmda/master/scripts/bootstrap.sh && sudo chmod +x bootstrap.sh && sudo ./bootstrap.sh y && rm -f bootstrap.sh
+> ```
+
+> [!CAUTION]
+> Downloading scripts like this and running them as root without double checking them is extremely dangerous. As my script isn't too long, I advise reading it beforehand.
+>
+> <https://raw.githubusercontent.com/Khenziii/nixos-config/master/install.sh>
+
+After running the above command (and filling out a couple of inputs), you'll have to define ASMDA's configuration options in `~/asmda-secrets.env`. 
+
+> [!TIP]
+> If you want to change the path of this file, you can edit `/usr/bin/asmda`.
+
+The easiest way to do so is by copying them from this repository and later modifying them as needed. To do so run:
+
+```shell
+$ wget https://raw.githubusercontent.com/khenziii/asmda/master/.env.example
+$ mv .env.example asmda-secrets.env
+$ mv asmda-secrets.env ~
+```
+
+</details>
+
 ## Development Environment
 
 First you'll need to define your environment variables. Do so by copying `.env.example`, renaming it as `.env` and filling out the fields.
