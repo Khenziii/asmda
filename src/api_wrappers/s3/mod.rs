@@ -2,8 +2,10 @@ pub mod utils;
 
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
+use crate::logger::logger;
 use crate::utils::constants::APIWrapperIdentificator;
-use s3::{Bucket, BucketConfiguration, Region, creds::Credentials};
+use crate::utils::exit::exit;
+use s3::{Bucket, Region, creds::Credentials};
 
 pub struct S3Client {
     bucket: Bucket,
@@ -30,23 +32,13 @@ async fn get_main_bucket() -> Bucket {
         None,
     )
     .unwrap();
-    let bucket_config = BucketConfiguration::default();
 
     let bucket = Bucket::new(&config.s3.bucket_name, region.clone(), credentials.clone()).unwrap();
 
-    let bucket_exists = bucket
-        .exists()
-        .await
-        .expect("Failed to check whether a bucket exists! Are the S3 credentials surely correct?");
-    if !bucket_exists {
-        Bucket::create_with_path_style(
-            &config.s3.bucket_name,
-            region.clone(),
-            credentials.clone(),
-            bucket_config.clone(),
-        )
-        .await
-        .unwrap_or_else(|_| panic!("Failed to create the `{}` bucket!", &config.s3.bucket_name,));
+    if let Err(error) = bucket.list("".to_string(), None).await {
+        let error_message = format!("Can't access storage bucket! No data at all will be stored. Please correct stored credentials. Details: {}", error);
+        logger().error(&error_message);
+        exit();
     }
 
     *bucket
@@ -59,7 +51,7 @@ impl S3Client {
     }
 
     pub async fn upload(&self, app_name: &str, filename: &str, data: Vec<u8>) {
-        let object_path = format!("{}/{}/{}", self.bucket.name, app_name, filename);
+        let object_path = format!("{}/{}", app_name, filename);
         self.bucket
             .put_object(object_path, &data)
             .await
