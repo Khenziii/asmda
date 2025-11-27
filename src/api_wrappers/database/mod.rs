@@ -1,6 +1,8 @@
 use crate::api_wrappers::APIWrapper;
 use crate::environment;
 use crate::utils::constants::{APIWrapperIdentificator, ArchiverIdentificator};
+use crate::utils::startup::create_database_directory_if_missing;
+use crate::utils::tests::is_test_environment;
 use crate::utils::time::{str_to_system_time, system_time_to_str};
 use rusqlite::{Connection, Error::QueryReturnedNoRows};
 use std::time::SystemTime;
@@ -23,6 +25,12 @@ impl Default for DatabaseClient {
 
 impl DatabaseClient {
     pub fn new() -> Self {
+        // We need to call this again here if in test environment, as the usually used `startup`
+        // function doesn't run in tests. This prevents any errors caused by that.
+        if is_test_environment() {
+            create_database_directory_if_missing();
+        }
+
         let config = environment::environment();
 
         let connection = Connection::open(&config.metadata.database_path).unwrap_or_else(|_| {
