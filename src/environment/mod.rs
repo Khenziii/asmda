@@ -7,7 +7,7 @@ use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use types::{
     Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment,
-    StatusServerEnvironment,
+    StatusServerEnvironment, WebDriverEnvironment
 };
 use utils::decryption_key_passphrase::decryption_key_passphrase;
 use utils::environment::get_env_var;
@@ -49,6 +49,10 @@ pub fn environment() -> &'static Environment {
             status_server: StatusServerEnvironment {
                 enable: as_boolean(get_env_var(StatusServerEnable)),
                 port: as_integer(get_env_var(StatusServerPort)),
+            },
+            webdriver: WebDriverEnvironment {
+                url: get_env_var(WebDriverUrl),
+                port: as_integer(get_env_var(WebDriverPort)),
             },
         }
     })
