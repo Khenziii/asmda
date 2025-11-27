@@ -36,7 +36,10 @@ async fn get_main_bucket() -> Bucket {
     let bucket = Bucket::new(&config.s3.bucket_name, region.clone(), credentials.clone()).unwrap();
 
     if let Err(error) = bucket.list("".to_string(), None).await {
-        let error_message = format!("Can't access storage bucket! No data at all will be stored. Please correct stored credentials. Details: {}", error);
+        let error_message = format!(
+            "Can't access storage bucket! No data at all will be stored. Please correct stored credentials. Details: {}",
+            error
+        );
         logger().error(&error_message);
         exit();
     }
