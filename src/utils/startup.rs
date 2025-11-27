@@ -81,8 +81,8 @@ pub fn create_directories_if_missing() {
 
 pub fn startup() {
     install_crypto_ring_default_provider();
-    show_environment_if_in_dev_env();
     create_directories_if_missing();
+    show_environment_if_in_dev_env();
     if !is_test_environment() {
         enable_terminal_alternate_screen_mode();
         enable_terminal_raw_mode();
