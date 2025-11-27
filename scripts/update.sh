@@ -8,7 +8,7 @@ wget "https://github.com/Khenziii/asmda/releases/download/$version/asmda-$versio
 
 echo "Killing previous processes..."
 
-pkill -9 asmda
+pkill -9 -x asmda
 
 echo "Setting up new binary..."
 
@@ -17,6 +17,4 @@ chmod +x asmda-unwrapped
 sudo rm /usr/bin/asmda-unwrapped
 sudo mv asmda-unwrapped /usr/bin
 
-echo "Finished! You can now use \`asmda\` as usual:"
-echo "\$ asmda --version"
-asmda --version
+echo "Finished!"
