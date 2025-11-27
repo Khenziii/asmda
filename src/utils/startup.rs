@@ -82,10 +82,10 @@ pub fn create_directories_if_missing() {
 pub fn startup() {
     install_crypto_ring_default_provider();
     show_environment_if_in_dev_env();
+    create_directories_if_missing();
     if !is_test_environment() {
         enable_terminal_alternate_screen_mode();
         enable_terminal_raw_mode();
-        create_directories_if_missing();
         setup_user_event_loop();
         setup_signals_event_loop();
         setup_status_server();
