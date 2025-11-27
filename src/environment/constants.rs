@@ -23,6 +23,8 @@ pub enum EnvironmentVariable {
     SecretsDecryptionKeyPassphrase,
     StatusServerEnable,
     StatusServerPort,
+    WebDriverUrl,
+    WebDriverPort,
 }
 
 impl EnvironmentVariable {
@@ -43,6 +45,8 @@ impl EnvironmentVariable {
             Self::SecretsDecryptionKeyPassphrase => "SECRETS_DECRYPTION_KEY_PASSPHRASE",
             Self::StatusServerEnable => "STATUS_SERVER_ENABLE",
             Self::StatusServerPort => "STATUS_SERVER_PORT",
+            Self::WebDriverUrl => "WEBDRIVER_URL",
+            Self::WebDriverPort => "WEBDRIVER_PORT",
         };
         str.to_string()
     }
@@ -64,6 +68,8 @@ impl EnvironmentVariable {
             Self::SecretsDecryptionKeyPassphrase => false,
             Self::StatusServerEnable => false,
             Self::StatusServerPort => false,
+            Self::WebDriverUrl => false,
+            Self::WebDriverPort => false,
         }
     }
 
@@ -83,6 +89,8 @@ impl EnvironmentVariable {
             Self::SecretsDecryptionKeyPassphrase => None,
             Self::StatusServerEnable => Some("true"),
             Self::StatusServerPort => Some("3002"),
+            Self::WebDriverUrl => Some("http://localhost"),
+            Self::WebDriverPort => Some("4444"),
         };
         value.map(|value| value.to_string())
     }

@@ -48,6 +48,7 @@ fi
 
 check_if_executed_by_root
 check_if_installed "wget"
+check_if_installed "dotenv"
 
 echo "Fetching the scripts..."
 
