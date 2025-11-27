@@ -26,21 +26,18 @@ If you're using x86-64 Linux, you can easily download this app without any virtu
 $ wget https://raw.githubusercontent.com/khenziii/asmda/master/scripts/bootstrap.sh && sudo chmod +x bootstrap.sh && sudo ./bootstrap.sh && rm -f bootstrap.sh
 ```
 
-> [!TIP]
-> You can pass `"y"` as the first parameter when calling this script to skip any "Are you sure?" questions. Here's how that would look like:
+> TIP: You can pass `"y"` as the first parameter when calling this script to skip any "Are you sure?" questions. Here's how that would look like:
 > ```shell
 > $ wget https://raw.githubusercontent.com/khenziii/asmda/master/scripts/bootstrap.sh && sudo chmod +x bootstrap.sh && sudo ./bootstrap.sh y && rm -f bootstrap.sh
 > ```
 
-> [!CAUTION]
-> Downloading scripts like this and running them as root without double checking them is extremely dangerous. As my script isn't too long, I advise reading it beforehand.
+> CAUTION: Downloading scripts like this and running them as root without any double checking is extremely dangerous. As my script isn't too long, I advise reading it beforehand.
 >
-> <https://raw.githubusercontent.com/Khenziii/nixos-config/master/install.sh>
+> <https://raw.githubusercontent.com/khenziii/asmda/master/scripts/bootstrap.sh>
 
 After running the above command (and filling out a couple of inputs), you'll have to define ASMDA's configuration options in `~/asmda-secrets.env`. 
 
-> [!TIP]
-> If you want to change the path of this file, you can edit `/usr/bin/asmda`.
+> TIP: If you want to change the path of this file, you can edit `/usr/bin/asmda`.
 
 The easiest way to do so is by copying them from this repository and later modifying them as needed. To do so run:
 
