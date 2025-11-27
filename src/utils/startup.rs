@@ -7,9 +7,9 @@ use crate::utils::tests::is_test_environment;
 use crossterm::ExecutableCommand;
 use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
 use rustls;
-use std::path::PathBuf;
-use std::io::stdout;
 use std::fs;
+use std::io::stdout;
+use std::path::PathBuf;
 
 pub fn show_environment_if_in_dev_env() {
     let config = environment::environment();

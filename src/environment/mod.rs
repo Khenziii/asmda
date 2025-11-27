@@ -7,7 +7,7 @@ use dotenv::dotenv;
 use once_cell::sync::OnceCell;
 use types::{
     Environment, LetterboxdEnvironment, Metadata, S3Environment, SecretsEnvironment,
-    StatusServerEnvironment, WebDriverEnvironment
+    StatusServerEnvironment, WebDriverEnvironment,
 };
 use utils::decryption_key_passphrase::decryption_key_passphrase;
 use utils::environment::get_env_var;
